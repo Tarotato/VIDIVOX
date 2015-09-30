@@ -1,4 +1,4 @@
-# Prototype for VIDIVOX
+# Prototype for VIDIVOX - completed 30/09/2015
 SE206 2015 - Assignment 3 (Prototype for VIDIVOX)
 Creators: izhu678 and rlee291
 
