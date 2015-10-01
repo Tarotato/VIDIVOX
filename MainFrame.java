@@ -64,8 +64,8 @@ public class MainFrame extends JFrame {
 	static boolean stopForward = false;
 	private ArrayList<Integer> killPID = new ArrayList<Integer>();
 	
-	private EmbeddedMediaPlayerComponent component;
-	protected MediaPlayer video = null;
+	protected EmbeddedMediaPlayerComponent component = new EmbeddedMediaPlayerComponent();
+	protected MediaPlayer video;
 	protected static String currentVideoPath;
 	protected static String mp3Name = null;
 	protected static String videoName = null;
@@ -116,31 +116,39 @@ public class MainFrame extends JFrame {
 		
 		
 		// Video player implementation -------------------------------------------------->
-		JPanel videoPane = new JPanel(); // Left side of the split pane
-        videoPane.setLayout(new BorderLayout());
+		//VideoPanel videoPanel = new VideoPanel(video, component);
+		JPanel videoPanel = new JPanel(); // Left side of the split pane
+        videoPanel.setLayout(new BorderLayout());
         
         // Add a media component
-        component = new EmbeddedMediaPlayerComponent();
-        videoPane.add(component, BorderLayout.CENTER);
+        //component = new EmbeddedMediaPlayerComponent();
+        videoPanel.add(component, BorderLayout.CENTER);
         video = component.getMediaPlayer();
+        
+        //-------------------------------------------------->
 		
-		JPanel controls = new JPanel(); // Holds everything under the video player
-		videoPane.add(controls, BorderLayout.SOUTH);
-		controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
-		
+        
+//		JPanel controls = new JPanel(); // Holds everything under the video player
+//		videoPanel.add(controls, BorderLayout.SOUTH);
+//		controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
+//		
 		JPanel progress = new JPanel(); // Holds the time in seconds and the progress bar (in controls Panel)
-		controls.add(progress);
-		progress.setLayout(new BoxLayout(progress, BoxLayout.X_AXIS));
-		
+//		controls.add(progress);
+//		progress.setLayout(new BoxLayout(progress, BoxLayout.X_AXIS));
+//		
 		final JLabel lblTime = new JLabel("0 s"); // Shows the time in seconds since the start of video (GUI)
-		progress.add(lblTime);
-		
+//		progress.add(lblTime);
+//		
 		final JProgressBar bar = new JProgressBar(); // Shows the progress of the video (GUI)
-		progress.add(bar);
+//		progress.add(bar);
 
 		JPanel video_control = new JPanel(); // Holds all the video control buttons (in controls Panel)
-		controls.add(video_control);
-		video_control.setLayout(new BoxLayout(video_control, BoxLayout.X_AXIS));
+//		controls.add(video_control);
+//		video_control.setLayout(new BoxLayout(video_control, BoxLayout.X_AXIS));
+		
+		CustomControlPanel controls = new CustomControlPanel(videoPanel, progress, lblTime, bar, video_control);
+		
+		//-------------------------------------------------->
 		
 		// Initialize all the buttons in video_control Panel
 		JButton btnSkipBack = new JButton();
@@ -249,7 +257,7 @@ public class MainFrame extends JFrame {
 			}
 		});
 		panel_1.add(btnMute);
-		videoPane.setMinimumSize(new Dimension(300, 500)); // Sets minimum dimensions for resizing purposes
+		videoPanel.setMinimumSize(new Dimension(300, 500)); // Sets minimum dimensions for resizing purposes
 		
 		
 		// Audio editing implementation ---------------------------------------------------->
@@ -400,7 +408,7 @@ public class MainFrame extends JFrame {
 		JSplitPane splitPane = new JSplitPane();
 		setContentPane(splitPane);
 		splitPane.setResizeWeight(0.8); // Resizes the frames in a 8:2 ratio
-		splitPane.setLeftComponent(videoPane);
+		splitPane.setLeftComponent(videoPanel);
 		splitPane.setRightComponent(audio_editing);
 		splitPane.setDividerLocation(700 + splitPane.getInsets().left);
 		
