@@ -15,7 +15,6 @@ import uk.co.caprica.vlcj.player.MediaPlayer;
 public class CustomMenuBar extends JMenuBar{
 	
 	public CustomMenuBar(final MediaPlayer video, final MainFrame mainFrame){
-		CustomMenuBar thisCustomeMenuBar = this;
 		
 		JMenu mnFile = new JMenu("File");
 		this.add(mnFile);
