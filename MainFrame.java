@@ -312,7 +312,7 @@ public class MainFrame extends JFrame {
 	   			StringTokenizer st = new StringTokenizer(words);
 	   			st.countTokens();
 	   			
-	   			if (st.countTokens() > 0 || st.countTokens() <= 40) {
+	   			if (st.countTokens() > 0 && st.countTokens() <= 40) {
 	   				// Prompt user for what they want to name their mp3 file
 	   				JDialog saveDialog = new saveAsDialog("mp3", txtrCommentary.getText());
 	   				saveDialog.setVisible(true);
