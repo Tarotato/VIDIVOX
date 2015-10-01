@@ -64,8 +64,8 @@ public class MainFrame extends JFrame {
 	static boolean stopForward = false;
 	private ArrayList<Integer> killPID = new ArrayList<Integer>();
 	
-	private final EmbeddedMediaPlayerComponent component;
-	private final MediaPlayer video;
+	private EmbeddedMediaPlayerComponent component;
+	protected MediaPlayer video = null;
 	protected static String currentVideoPath;
 	protected static String mp3Name = null;
 	protected static String videoName = null;
@@ -81,7 +81,9 @@ public class MainFrame extends JFrame {
 		currentVideoPath = videoPath;
 		
 		// Top menu bar implementation -------------------------------------------------->
-		JMenuBar menuBar = new JMenuBar();
+		CustomMenuBar menuBar = new CustomMenuBar(video, this);
+		setJMenuBar(menuBar);
+		/*JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		
 		JMenu mnFile = new JMenu("File");
@@ -100,9 +102,9 @@ public class MainFrame extends JFrame {
 				if(okReturnVal == JFileChooser.APPROVE_OPTION) {
 					newPath = videoChooser.getSelectedFile().getPath();
 					// Check if file chosen is a video, if yes, change video, if not, show error dialog and do nothing
-					if(File.isVideo(newPath)) {
+					if(VideoMethods.isVideo(newPath)) {
 						video.playMedia(newPath);
-						File.setCurrentVideoPath(newPath);
+						VideoMethods.setCurrentVideoPath(newPath);
 					} else {
 						JOptionPane.showMessageDialog(thisFrame, "The file you have chosen is not a video, please try again.");
 					}
@@ -110,7 +112,7 @@ public class MainFrame extends JFrame {
 				
 			}
 		});
-		mnFile.add(mntmOpenNewVideo);
+		mnFile.add(mntmOpenNewVideo);*/
 		
 		
 		// Video player implementation -------------------------------------------------->
@@ -312,7 +314,7 @@ public class MainFrame extends JFrame {
 	   			StringTokenizer st = new StringTokenizer(words);
 	   			st.countTokens();
 	   			
-	   			if (st.countTokens() > 0 && st.countTokens() <= 40) {
+	   			if (st.countTokens() > 0 || st.countTokens() <= 40) {
 	   				// Prompt user for what they want to name their mp3 file
 	   				JDialog saveDialog = new saveAsDialog("mp3", txtrCommentary.getText());
 	   				saveDialog.setVisible(true);
@@ -342,7 +344,7 @@ public class MainFrame extends JFrame {
 			    if(okReturnVal == JFileChooser.APPROVE_OPTION) {
 			    	mp3Path = mp3Chooser.getSelectedFile().getPath();
 
-			    	if(File.isMp3(mp3Path)){
+			    	if(VideoMethods.isMp3(mp3Path)){
 			    		
 			    		// Prompt user for a merged video name
 						saveAsDialog saveVideo = new saveAsDialog("video", null);
@@ -365,13 +367,13 @@ public class MainFrame extends JFrame {
 							// Generate an .avi file if none already exists
 							if(!saveVideo.cancelClicked){
 								if(line.equals("0")) {
-									String videoPath = File.getCurrentVideoPath(); // Video to merge with is the one currently playing
-									File.mergeMp3(mp3Path, videoPath);
-									int n = JOptionPane.showConfirmDialog((Component) null, "Successfully merged "+ File.getBasename(mp3Path) +" with "+ File.getBasename(videoPath) +".\n Would you like to play it now?", "alert", JOptionPane.OK_CANCEL_OPTION);
+									String videoPath = VideoMethods.getCurrentVideoPath(); // Video to merge with is the one currently playing
+									VideoMethods.mergeMp3(mp3Path, videoPath);
+									int n = JOptionPane.showConfirmDialog((Component) null, "Successfully merged "+ VideoMethods.getBasename(mp3Path) +" with "+ VideoMethods.getBasename(videoPath) +".\n Would you like to play it now?", "alert", JOptionPane.OK_CANCEL_OPTION);
 					    		
 					    			if(n == 0) { // Change the video to output.avi if user selects "OK"
 					    				video.playMedia("VideoFiles/"+videoName+".avi");
-					    				File.setCurrentVideoPath(System.getProperty("user.dir") + "VideoFiles/"+videoName+".avi");
+					    				VideoMethods.setCurrentVideoPath(System.getProperty("user.dir") + "VideoFiles/"+videoName+".avi");
 					    			}
 									
 								} else {
