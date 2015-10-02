@@ -60,7 +60,8 @@ public class MainFrame extends JFrame {
 	
 	int festID = 0; //because process ID is very unlikely to be 0
 	static boolean playClicked = true;
-	static boolean muteClicked = false;
+	//static boolean muteClicked = false;
+	int[] muteClicked = {1};
 	static boolean stopForward = false;
 	private ArrayList<Integer> killPID = new ArrayList<Integer>();
 	
@@ -142,11 +143,11 @@ public class MainFrame extends JFrame {
 		final JProgressBar bar = new JProgressBar(); // Shows the progress of the video (GUI)
 //		progress.add(bar);
 
-		JPanel video_control = new JPanel(); // Holds all the video control buttons (in controls Panel)
+		JPanel videoControlPanel = new JPanel(); // Holds all the video control buttons (in controls Panel)
 //		controls.add(video_control);
 //		video_control.setLayout(new BoxLayout(video_control, BoxLayout.X_AXIS));
 		
-		CustomControlPanel controls = new CustomControlPanel(videoPanel, progress, lblTime, bar, video_control);
+		CustomControlPanel controls = new CustomControlPanel(videoPanel, progress, lblTime, bar, videoControlPanel);
 		
 		//-------------------------------------------------->
 		
@@ -168,7 +169,7 @@ public class MainFrame extends JFrame {
 				video.skip(-5000);
 			}
 		});
-		video_control.add(btnSkipBack);
+		videoControlPanel.add(btnSkipBack);
 		
 		btnRewind.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -179,7 +180,7 @@ public class MainFrame extends JFrame {
 				rewind.execute();
 			}
 		});
-		video_control.add(btnRewind);
+		videoControlPanel.add(btnRewind);
 		
 		btnPlay.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -196,7 +197,7 @@ public class MainFrame extends JFrame {
 				}
 			}
 		});
-		video_control.add(btnPlay);
+		videoControlPanel.add(btnPlay);
 
 		btnForward.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -207,7 +208,7 @@ public class MainFrame extends JFrame {
 				forward.execute();
 			}
 		});
-		video_control.add(btnForward);
+		videoControlPanel.add(btnForward);
 		
 		btnSkipForward.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -215,11 +216,14 @@ public class MainFrame extends JFrame {
 				video.skip(5000);
 			}
 		});
-		video_control.add(btnSkipForward);
+		videoControlPanel.add(btnSkipForward);
 		
-		JPanel volume_control = new JPanel(); // Holds the volume control buttons (JSlider and Mute button)
+		//-------------------------------------------------->
+		
+		CustomVolumeControlPanel volume_control = new CustomVolumeControlPanel(video, muteClicked);
+		//JPanel volume_control = new JPanel(); // Holds the volume control buttons (JSlider and Mute button)
 		controls.add(volume_control);
-		volume_control.setLayout(new BorderLayout(0, 0));
+		/*volume_control.setLayout(new BorderLayout(0, 0));
 		
 		JPanel panel_1 = new JPanel(); // Panel used for layout purposes
 		volume_control.add(panel_1, BorderLayout.SOUTH);
@@ -256,28 +260,30 @@ public class MainFrame extends JFrame {
 				}
 			}
 		});
-		panel_1.add(btnMute);
+		panel_1.add(btnMute);*/
+		
 		videoPanel.setMinimumSize(new Dimension(300, 500)); // Sets minimum dimensions for resizing purposes
 		
+		//-------------------------------------------------->
 		
 		// Audio editing implementation ---------------------------------------------------->
-		JPanel audio_editing = new JPanel(); // Right side of the split pane
-		audio_editing.setLayout(new BoxLayout(audio_editing, BoxLayout.Y_AXIS));
-		audio_editing.setMinimumSize(new Dimension(300, 500));
+		JPanel audioEditingPanel = new JPanel(); // Right side of the split pane
+		audioEditingPanel.setLayout(new BoxLayout(audioEditingPanel, BoxLayout.Y_AXIS));
+		audioEditingPanel.setMinimumSize(new Dimension(300, 500));
 
 		JLabel lblEnterYourCommentary = new JLabel("Commentary here:"); // Label to tell user what the text area is for
 		lblEnterYourCommentary.setHorizontalAlignment(SwingConstants.LEFT);
 		lblEnterYourCommentary.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		lblEnterYourCommentary.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		audio_editing.add(lblEnterYourCommentary);
+		audioEditingPanel.add(lblEnterYourCommentary);
 		
 		final JTextArea txtrCommentary = new JTextArea(); // TextArea for user to enter their commentary
 		txtrCommentary.setText("(max 40 words)");
 		txtrCommentary.setLineWrap(true);
-		audio_editing.add(txtrCommentary);
+		audioEditingPanel.add(txtrCommentary);
 		
 		JPanel audio_options = new JPanel(); // Holds all buttons below JTextArea
-		audio_editing.add(audio_options);
+		audioEditingPanel.add(audio_options);
 		
 		JButton btnSpeak = new JButton("Speak");
 		btnSpeak.addActionListener(new ActionListener() {
@@ -334,7 +340,7 @@ public class MainFrame extends JFrame {
 		audio_options.add(btnSaveAs);
 		
 		JPanel panel = new JPanel(); // Another panel for formatting purposes
-		audio_editing.add(panel);
+		audioEditingPanel.add(panel);
 		panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
 		// Let user select an .mp3 file to merge with current video
@@ -409,7 +415,7 @@ public class MainFrame extends JFrame {
 		setContentPane(splitPane);
 		splitPane.setResizeWeight(0.8); // Resizes the frames in a 8:2 ratio
 		splitPane.setLeftComponent(videoPanel);
-		splitPane.setRightComponent(audio_editing);
+		splitPane.setRightComponent(audioEditingPanel);
 		splitPane.setDividerLocation(700 + splitPane.getInsets().left);
 		
 		
@@ -456,7 +462,7 @@ public class MainFrame extends JFrame {
             {
             	e.getWindow().dispose();
             	// If the video is muted, unmuted before exiting the program
-            	if(muteClicked) {
+            	if(muteClicked[0] == 0) {
 		    		video.mute();
 		    	}
             }
