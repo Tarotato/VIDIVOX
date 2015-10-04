@@ -16,17 +16,16 @@ import javax.swing.event.ChangeListener;
 
 import uk.co.caprica.vlcj.player.MediaPlayer;
 
-public class CustomVolumeControlPanel extends JPanel {
+public class VolumeControlPanel extends JPanel {
 
-	public CustomVolumeControlPanel(final MediaPlayer video, final int[] muteClicked) {
+	public VolumeControlPanel(final MediaPlayer video, final int[] muteClicked) {
 		this.setLayout(new BorderLayout(0, 0));
 
 		JPanel panel_1 = new JPanel(); // Panel used for layout purposes
 		this.add(panel_1, BorderLayout.SOUTH);
 		panel_1.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 
-		JLabel lblVolume = new JLabel("Volume"); // Label to tell user JSlider is for volume control
-													
+		JLabel lblVolume = new JLabel("Volume"); // Label to tell user JSlider is for volume control													
 		panel_1.add(lblVolume);
 		lblVolume.setFont(new Font("Tahoma", Font.PLAIN, 15));
 
