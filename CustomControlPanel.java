@@ -9,7 +9,7 @@ import javax.swing.JProgressBar;
 
 public class CustomControlPanel extends JPanel {
 	
-	public CustomControlPanel(JPanel videoPanel, JPanel progress, JLabel lblTime, JProgressBar bar, JPanel video_control){
+	public CustomControlPanel(JPanel videoPanel, JPanel progress, JLabel lblTime, JProgressBar bar, JPanel videoControlPanel){
 		
 		videoPanel.add(this, BorderLayout.SOUTH);
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));				
@@ -21,8 +21,8 @@ public class CustomControlPanel extends JPanel {
 				
 		progress.add(bar);
 		
-		this.add(video_control);
-		video_control.setLayout(new BoxLayout(video_control, BoxLayout.X_AXIS));
+		this.add(videoControlPanel);
+		videoControlPanel.setLayout(new BoxLayout(videoControlPanel, BoxLayout.X_AXIS));
 	}
 
 }
