@@ -35,7 +35,6 @@ public class MainFrame extends JFrame {
 	//static boolean muteClicked = false;
 	int[] muteClicked = {1};
 	static boolean stopForward = false;
-	private ArrayList<Integer> killPID = new ArrayList<Integer>();
 	
 	protected EmbeddedMediaPlayerComponent component = new EmbeddedMediaPlayerComponent();
 	protected MediaPlayer video;
@@ -54,17 +53,15 @@ public class MainFrame extends JFrame {
 		currentVideoPath = videoPath;
 		
 		// Top menu bar implementation -------------------------------------------------->
-		CustomMenuBar menuBar = new CustomMenuBar(video, this);
+		MenuBar menuBar = new MenuBar(video, this);
 		setJMenuBar(menuBar);
 	
 		
 		// Video player implementation -------------------------------------------------->
-		//VideoPanel videoPanel = new VideoPanel(video, component);
 		JPanel videoPanel = new JPanel(); // Left side of the split pane
         videoPanel.setLayout(new BorderLayout());
         
         // Add a media component
-        //component = new EmbeddedMediaPlayerComponent();
         videoPanel.add(component, BorderLayout.CENTER);
         video = component.getMediaPlayer();
         
@@ -151,7 +148,7 @@ public class MainFrame extends JFrame {
 		
 		//-------------------------------------------------->
 		
-		CustomVolumeControlPanel volume_control = new CustomVolumeControlPanel(video, muteClicked);
+		VolumeControlPanel volume_control = new VolumeControlPanel(video, muteClicked);
 		controls.add(volume_control);	
 		
 		videoPanel.setMinimumSize(new Dimension(300, 500)); // Sets minimum dimensions for resizing purposes
@@ -225,3 +222,4 @@ public class MainFrame extends JFrame {
         });
 	}
 }
+
