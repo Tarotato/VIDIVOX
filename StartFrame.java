@@ -42,6 +42,7 @@ public class StartFrame extends JFrame {
 			public void run() {
 				try {
 					StartFrame frame = new StartFrame();
+					System.out.print("2nd one");
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -116,14 +117,13 @@ public class StartFrame extends JFrame {
 				if(chckbxDefaultVid.isSelected()) { // If the user chooses to use the bunny video
 					thisFrame.dispose();
 					new MainFrame("./VideoFiles/bunny.avi");
-				} else if(File.isVideo(videoPath)) { // If the user has chosen a video
+				} else if(VideoMethods.isVideo(videoPath)) { // If the user has chosen a video
 					thisFrame.dispose();
 					new MainFrame(videoPath);	
 				} else { // If the user has not chosen a video
 					// Display an error dialog
 					JOptionPane.showMessageDialog(thisFrame, "The file you have chosen is not a video, please try again.");
-				}			
-
+				}
 			}
 		});
 		panel_4.add(btnNewButton);
@@ -131,7 +131,10 @@ public class StartFrame extends JFrame {
 		JButton btnCancel = new JButton("Cancel");
 		btnCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				thisFrame.dispose();
+				int n = JOptionPane.showConfirmDialog(thisFrame, "Are you qure you want to quit?", "Exit", JOptionPane.OK_CANCEL_OPTION);
+				if (n==0){
+					thisFrame.dispose();
+				}
 			}
 		});
 		panel_4.add(btnCancel);
