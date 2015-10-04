@@ -12,10 +12,10 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import uk.co.caprica.vlcj.player.MediaPlayer;
 
-public class CustomMenuBar extends JMenuBar{
+public class MenuBar extends JMenuBar{
 	
-	public CustomMenuBar(final MediaPlayer video, final MainFrame mainFrame){
-		
+	public MenuBar(final MediaPlayer video, final MainFrame mainFrame){
+				
 		JMenu mnFile = new JMenu("File");
 		this.add(mnFile);
 		
