@@ -1,4 +1,4 @@
-package VIDIVOX_prototype;
+package vidivox_beta;
 
 import java.awt.Color;
 import java.awt.event.FocusEvent;
