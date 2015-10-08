@@ -1,8 +1,6 @@
-package VIDIVOX_prototype;
+package vidivox_beta;
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,7 +21,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -34,7 +31,7 @@ public class TextEditingPanel extends JPanel{
 	private ArrayList<Integer> killPID = new ArrayList<Integer>();
 	int festID = 0; // Process ID is very unlikely to be 0
 	
-	public TextEditingPanel(final MediaPlayer video, final String videoName, final JFrame thisFrame){
+	public TextEditingPanel(final MediaPlayer video, final String[] videoName, final JFrame thisFrame){
 		
 		this.setLayout(new BorderLayout());
 		this.setMinimumSize(new Dimension(300, 500));
@@ -172,7 +169,7 @@ public class TextEditingPanel extends JPanel{
 			    if(okReturnVal == JFileChooser.APPROVE_OPTION) {
 			    	mp3Path = mp3Chooser.getSelectedFile().getPath();
 
-			    	if(VideoMethods.isMp3(mp3Path)){			    		
+			    	if(HelperFile.isMp3(mp3Path)){			    		
 			    		// Prompt user for a merged video name
 						saveAsDialog saveVideo = new saveAsDialog("video", null);
 						saveVideo.setModal(true);
@@ -180,7 +177,7 @@ public class TextEditingPanel extends JPanel{
 						
 						try {							
 							// Find out if any .mp3 file in MP3Files folder has the same name user has entered for MP3 file name
-							String cmd = "find | grep -x \"./VideoFiles/" + videoName +".avi\" | wc -l";
+							String cmd = "find | grep -x \"./VideoFiles/" + videoName[0] +".avi\" | wc -l";
 							ProcessBuilder builder = new ProcessBuilder("/bin/bash", "-c", cmd);
 							Process process = builder.start();
 							
@@ -189,26 +186,30 @@ public class TextEditingPanel extends JPanel{
 							BufferedReader stdoutBuffered =	new BufferedReader(new InputStreamReader(stdout));
 									
 							String line = stdoutBuffered.readLine();								
-									
+							
 							// Generate an .avi file if none already exists
 							if(!saveVideo.cancelClicked){
 								if(line.equals("0")) {
-									String videoPath = VideoMethods.getCurrentVideoPath(); // Video to merge with is the one currently playing
-									VideoMethods.mergeMp3(mp3Path, videoPath);
-									int n = JOptionPane.showConfirmDialog((Component) null, "Successfully merged "+ VideoMethods.getBasename(mp3Path) +" with "+ VideoMethods.getBasename(videoPath) +".\n Would you like to play it now?", "alert", JOptionPane.OK_CANCEL_OPTION);
+									String videoPath = HelperFile.getCurrentVideoPath(); // Video to merge with is the one currently playing
+									System.out.println("through");
+									HelperFile.mergeMp3(mp3Path, videoPath, thisFrame, videoName);
+									
+									int n = JOptionPane.showConfirmDialog(thisFrame, "Successfully merged "+ HelperFile.getBasename(mp3Path) +" with "+ HelperFile.getBasename(videoPath) +".\n Would you like to play it now?", "alert", JOptionPane.OK_CANCEL_OPTION);
 					    		
 					    			if(n == 0) { // Change the video to output.avi if user selects "OK"
-					    				video.playMedia("VideoFiles/"+videoName+".avi");
-					    				VideoMethods.setCurrentVideoPath(System.getProperty("user.dir") + "VideoFiles/"+videoName+".avi");
+					    				video.playMedia("VideoFiles/"+videoName[0]+".avi");
+					    				HelperFile.setCurrentVideoPath(System.getProperty("user.dir") + "VideoFiles/"+videoName[0]+".avi");
 					    			}									
-								} else {
+								} else if(!videoName[0].equals("")){
 									// Error dialog if name of mp3 already exists
-									JOptionPane.showMessageDialog(thisFrame, "This name is taken. Please choose another.");
+									JOptionPane.showMessageDialog(thisFrame, "This name is taken. Please choose another.", null , JOptionPane.INFORMATION_MESSAGE);
 								}
-							}									
+							}
+						
 						} catch (IOException e1) {
 							e1.printStackTrace();
-						}					    		
+						}
+										    		
 			    	} else {
 			    		// Navigate to an error dialog
 			    		JOptionPane.showMessageDialog(thisFrame, "Please make sure the file you have chosen is an audio file (.mp3).");

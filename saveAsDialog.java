@@ -1,6 +1,5 @@
-package VIDIVOX_prototype;
+package vidivox_beta;
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.FlowLayout;
 
 import javax.swing.JButton;
@@ -46,7 +45,7 @@ public class saveAsDialog extends JDialog {
         }
         lblNameYour.setFont(new Font("Tahoma", Font.PLAIN, 20));
         lblNameYour.setHorizontalAlignment(SwingConstants.CENTER);
-        lblNameYour.setBounds(75, 44, 275, 40);
+        lblNameYour.setBounds(75, 44, 350, 40);
         contentPanel.add(lblNameYour);
         
         JLabel lblMpName = new JLabel("Name:");
@@ -54,9 +53,19 @@ public class saveAsDialog extends JDialog {
         contentPanel.add(lblMpName);
         
         textField = new JTextField();
-        textField.setBounds(170, 130, 150, 20);
+        textField.setBounds(160, 130, 150, 20);
         contentPanel.add(textField);
-        textField.setColumns(10);     
+        textField.setColumns(10); 
+        
+        if(type.equals("mp3")) {
+			JLabel lblmp3 = new JLabel(".mp3");
+	        lblmp3.setBounds(350, 130, 110, 20);
+	        contentPanel.add(lblmp3);
+		} else {
+			JLabel lblmp3 = new JLabel(".avi");
+	        lblmp3.setBounds(350, 130, 110, 20);
+	        contentPanel.add(lblmp3);
+		}
                 
         JPanel buttonPane = new JPanel();
         buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -66,12 +75,16 @@ public class saveAsDialog extends JDialog {
         okButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent arg0) {
         		// Compares if dialog is used for naming an mp3 file or video
-        		if(type.equals("mp3")) {
-        			File.saveAsMp3(commentary, textField.getText(), thisDialog); // Will save commentary as mp3
-        		} else {
-        			MainFrame.videoName = textField.getText(); // Gets the user-entered video name for executing further commands      			
-        			thisDialog.dispose();
-        		}	
+        		if(!textField.getText().trim().equals("")){
+	        		if(type.equals("mp3")) {
+	        			HelperFile.saveAsMp3(commentary, textField.getText().trim(), thisDialog); // Will save commentary as mp3
+	        		} else {
+	        			MainFrame.videoName[0] = textField.getText().trim(); // Gets the user-entered video name for executing further commands      			
+	        			thisDialog.dispose();
+	        		}	
+        		}else{
+        			JOptionPane.showMessageDialog(thisDialog, "Please enter a file name.", "Error: Invalid Input" , JOptionPane.ERROR_MESSAGE);
+        		}
         	}
 		});
         okButton.setActionCommand("OK");

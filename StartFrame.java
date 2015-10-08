@@ -1,4 +1,4 @@
-package VIDIVOX_prototype;
+package vidivox_beta;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
@@ -17,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 import java.awt.Font;
+import java.io.File;
 
 import javax.swing.JTextField;
 
@@ -55,6 +56,8 @@ public class StartFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public StartFrame() {
+		new File(System.getProperty("user.dir")+"/MP3Files").mkdirs();
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(300, 150, 500, 300);
 		contentPane = new JPanel();
@@ -100,7 +103,7 @@ public class StartFrame extends JFrame {
 		JPanel panel_2 = new JPanel();
 		panel.add(panel_2);
 		
-		final JCheckBox chckbxDefaultVid = new JCheckBox("Use Bunny Video"); // Tick if user wants to use the big buck bunny video
+		final JCheckBox chckbxDefaultVid = new JCheckBox("Use Default Video"); // Tick if user wants to use the big buck bunny video
 		panel_2.add(chckbxDefaultVid);
 		
 		JPanel panel_3 = new JPanel();
@@ -117,7 +120,7 @@ public class StartFrame extends JFrame {
 				if(chckbxDefaultVid.isSelected()) { // If the user chooses to use the bunny video
 					thisFrame.dispose();
 					new MainFrame("./VideoFiles/bunny.avi");
-				} else if(VideoMethods.isVideo(videoPath)) { // If the user has chosen a video
+				} else if(HelperFile.isVideo(videoPath)) { // If the user has chosen a video
 					thisFrame.dispose();
 					new MainFrame(videoPath);	
 				} else { // If the user has not chosen a video

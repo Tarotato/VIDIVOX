@@ -1,4 +1,4 @@
-package VIDIVOX_prototype;
+package vidivox_beta;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import javax.swing.JFrame;
@@ -19,7 +19,6 @@ import javax.swing.JLabel;
 
 import javax.swing.JSplitPane;
 
-import java.util.ArrayList;
 import uk.co.caprica.vlcj.player.MediaPlayer; //getTime(), skip(), mute(), pause(), play()
 import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent; 
@@ -40,7 +39,10 @@ public class MainFrame extends JFrame {
 	protected MediaPlayer video;
 	protected static String currentVideoPath;
 	protected static String mp3Name = null;
-	protected static String videoName = null;
+	//protected static String videoName = "";
+	protected static String[] videoName = {""};
+	
+	final int[] vidLength = {0}; // Initialize as array so final value can be changed
 	
 	/**
 	 * Create the frame.
@@ -51,12 +53,7 @@ public class MainFrame extends JFrame {
 		setBounds(100, 50, 1000, 650);
 		final JFrame thisFrame = this;
 		currentVideoPath = videoPath;
-		
-		// Top menu bar implementation -------------------------------------------------->
-		MenuBar menuBar = new MenuBar(video, this);
-		setJMenuBar(menuBar);
-	
-		
+
 		// Video player implementation -------------------------------------------------->
 		JPanel videoPanel = new JPanel(); // Left side of the split pane
         videoPanel.setLayout(new BorderLayout());
@@ -173,6 +170,10 @@ public class MainFrame extends JFrame {
 		splitPane.setRightComponent(rightContentPanel);
 		splitPane.setDividerLocation(700 + splitPane.getInsets().left);		
 		
+		// Top menu bar implementation -------------------------------------------------->
+		MenuBar menuBar = new MenuBar(video, this, splitPane, vidLength, bar);
+		setJMenuBar(menuBar);
+	
 		// Video manipulation implementation ------------------------------------------------->
 		this.setVisible(true); // Set the frame to visible before playing the video
 		
@@ -189,7 +190,7 @@ public class MainFrame extends JFrame {
 		    }
 		});
 		
-		final int[] vidLength = {0}; // Initialize as array so final value can be changed
+
 		while(vidLength[0] == 0) {
 			vidLength[0] = (int)((video.getLength())/1000);
 		}	
@@ -198,8 +199,19 @@ public class MainFrame extends JFrame {
 		// Timer for updating the label and progress bar every half a second
 		Timer timer = new Timer(500, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if(((video.getTime())/1000)/60 < 1){
 				lblTime.setText((video.getTime())/1000+ " s"); // Update the label
 				bar.setValue((int)(video.getTime())/1000); // Update the progress bar
+				}
+				else if(((video.getTime())/1000)/60 >= 1){
+				lblTime.setText( ((video.getTime())/1000)/60+"m"+((video.getTime())/1000)%60+ "s"); // Update the label
+				bar.setValue((int)(video.getTime())/1000); // Update the progress bar
+				}
+				else if(((video.getTime())/1000)/3600 >= 1){
+					lblTime.setText( ((video.getTime())/1000)/3600+"h"+((video.getTime())/1000)%3600/60+"m"+((video.getTime())/1000)%3600%60+ "s"); // Update the label
+					bar.setValue((int)(video.getTime())/1000); // Update the progress bar
+				}				
+				
 				if(video.getLength() == 0) {
 					// If video gets to the end, stop the fast forwarding
 					stopForward = true;
