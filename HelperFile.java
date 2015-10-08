@@ -1,4 +1,4 @@
-package VIDIVOX_prototype;
+package vidivox_beta;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 
@@ -14,7 +15,7 @@ import javax.swing.JOptionPane;
  * @author Isabel Zhuang and Rebecca Lee
  * Class contains necessary methods for completing actions in MainFrame
  */
-public class File {
+public class HelperFile {
 
 	private static ProcessBuilder builder;
 	private static Process process;
@@ -39,6 +40,9 @@ public class File {
 			String line = null;
 			while ((line = stdout.readLine()) != null) {
 				if (line.matches("(.*)AVI(.*)")){ // Matches video format
+					return true;
+				}
+				if (line.matches("(.*)ISO Media, MPEG v4 system(.*)")){ // Matches audio format
 					return true;
 				}
 			}
@@ -85,9 +89,9 @@ public class File {
 	 * @param mp3Path
 	 * @param videoPath
 	 */
-	protected static void mergeMp3(String mp3Path, String videoPath) {
+	protected static void mergeMp3(String mp3Path, String videoPath, JFrame thisFrame, String[] videoName) {
 		try {
-			JOptionPane.showMessageDialog(null, "Your video will start merging as soon as you click OK, please be patient while it merges.");
+			JOptionPane.showMessageDialog(thisFrame, "Your video will start merging as soon as you click OK, please be patient while it merges.");
 			
 			// Deletes any existing output.mp3 file
 			String cmd = "rm -r ./MP3Files/.vidAudio.mp3";
@@ -114,8 +118,10 @@ public class File {
 			Thread.sleep(1000); 
 			
 			// Creates an output.avi file from merging combined audio (0:0) and existing video stream (1:0)
-			cmd = "ffmpeg -i ./MP3Files/.output.mp3 -i " + videoPath + " -map 0:0 -map 1:0 -acodec copy -vcodec copy ./VideoFiles/"+MainFrame.videoName+".avi";
+			cmd = "ffmpeg -i ./MP3Files/.output.mp3 -i "+ videoPath + " -map 0:0 -map 1:0 -acodec copy -vcodec copy ./VideoFiles/"+MainFrame.videoName[0]+".avi";
 			startProcess(cmd);
+			
+			Thread.sleep(1000); 
 			
 		} catch (IOException e1) {
 			e1.printStackTrace();
@@ -159,7 +165,7 @@ public class File {
 						
 				} else {
 					// Error dialog if name of mp3 already exists
-					JOptionPane.showMessageDialog(thisDialog, "This name is taken. Please choose another.");
+					JOptionPane.showMessageDialog(thisDialog, "This name is taken. Please choose another.", null , JOptionPane.INFORMATION_MESSAGE);
 				}
 						
 			} catch (IOException | InterruptedException e1) {
