@@ -1,6 +1,5 @@
-package VIDIVOX_prototype;
+package vidivox_beta;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -28,29 +27,25 @@ public class BgFestival extends SwingWorker<Void, Void> {
 	 */
 	@Override
 	protected Void doInBackground() throws Exception {
-
-		try {
+		killPID.add(0);		
+		try {	
+			
 			String cmd = "echo \"" + input + "\" | festival --tts & echo $!"; // echo $! returns the process ID of the process just executed
 
 			ProcessBuilder builder = new ProcessBuilder("/bin/bash", "-c", cmd);
 			Process process = builder.start();
-
+		
 			// Read the process ID for the process executed above
 			InputStream stdout = process.getInputStream();
 			BufferedReader stdoutbr = new BufferedReader(new InputStreamReader(stdout));
 			String line = stdoutbr.readLine();
 			festID = Integer.parseInt(line); // Stores ID for canceling(Stop)
-
-			//System.out.println("Be 0:" + killPID.size()); // For debugging use
-			killPID.add(festID);
-			//System.out.println("Be 1:" + killPID.size());
+			killPID.set(0, festID);
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
+				ex.printStackTrace();
 		}
-
 		return null;
-	}
-
+	}	
 }
 
