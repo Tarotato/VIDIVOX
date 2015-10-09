@@ -78,15 +78,16 @@ public class MainFrame extends JFrame {
 		
 		// Initialize all the buttons in video_control Panel
 		JButton btnSkipBack = new JButton();
-		btnSkipBack.setIcon(new ImageIcon("buttons/skipb.png"));
+		btnSkipBack.setIcon(new ImageIcon(this.getClass().getResource("/buttons/skipb.png")));
 		JButton btnRewind = new JButton();
-		btnRewind.setIcon(new ImageIcon("buttons/rewind.png"));
+		btnRewind.setIcon(new ImageIcon(this.getClass().getResource("/buttons/rewind.png")));
 		final JButton btnPlay = new JButton();
-		btnPlay.setIcon(new ImageIcon("buttons/pause.png"));
+		btnPlay.setIcon(new ImageIcon(this.getClass().getResource("/buttons/pause.png")));
+		//btnPlay.setIcon(new ImageIcon("buttons/pause.png"));
 		JButton btnForward = new JButton();
-		btnForward.setIcon(new ImageIcon("buttons/forward.png"));
+		btnForward.setIcon(new ImageIcon(this.getClass().getResource("/buttons/forward.png")));
 		JButton btnSkipForward = new JButton();
-		btnSkipForward.setIcon(new ImageIcon("buttons/skipf.png"));
+		btnSkipForward.setIcon(new ImageIcon(this.getClass().getResource("/buttons/skipf.png")));
 		
 		btnSkipBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -100,7 +101,7 @@ public class MainFrame extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				// Continues rewinding until user clicks play
 				playClicked = false;
-				btnPlay.setIcon(new ImageIcon("buttons/play.png")); // Set button to play
+				btnPlay.setIcon(new ImageIcon(this.getClass().getResource("/buttons/play.png")));; // Set button to play
 				BgForward rewind = new BgForward(-500, video); // Make a new background task
 				rewind.execute();
 			}
@@ -111,12 +112,12 @@ public class MainFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// Play or pause video depending on boolean variable playClicked
 				if(!playClicked) {
-					btnPlay.setIcon(new ImageIcon("buttons/pause.png"));
+					btnPlay.setIcon(new ImageIcon(this.getClass().getResource("/buttons/pause.png")));
 					video.play(); // Play the video
 					playClicked = true;
 					stopForward = false;
 				} else {
-					btnPlay.setIcon(new ImageIcon("buttons/play.png"));
+					btnPlay.setIcon(new ImageIcon(this.getClass().getResource("/buttons/play.png")));
 					video.pause(); // Pause the video
 					playClicked = false;
 				}
@@ -128,7 +129,7 @@ public class MainFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// Continues forwarding until user clicks play
 				playClicked = false;
-				btnPlay.setIcon(new ImageIcon("buttons/play.png")); // Set button to play
+				btnPlay.setIcon(new ImageIcon(this.getClass().getResource("/buttons/play.png"))); // Set button to play
 				BgForward forward = new BgForward(500, video); // Make a new background task
 				forward.execute();
 			}
@@ -185,7 +186,7 @@ public class MainFrame extends JFrame {
 		    public void finished(MediaPlayer mediaPlayer) {
 		        // Play button for playing again when video finishes playing
 		    	playClicked = false;
-		    	btnPlay.setIcon(new ImageIcon("buttons/play.png"));
+		    	btnPlay.setIcon(new ImageIcon(this.getClass().getResource("/buttons/play.png")));
 		    	stopForward = true; // For stopping the BgForward SwingWorker implementation (fast forwarding)
 		    }
 		});
