@@ -1,10 +1,12 @@
 package vidivox_beta;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 import javax.swing.Timer;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -42,7 +44,7 @@ public class MainFrame extends JFrame {
 	//protected static String videoName = "";
 	protected static String[] videoName = {""};
 	
-	final int[] vidLength = {0}; // Initialize as array so final value can be changed
+	final protected int[] vidLength = {0}; // Initialize as array so final value can be changed
 	
 	/**
 	 * Create the frame.
@@ -72,7 +74,11 @@ public class MainFrame extends JFrame {
 
 		JPanel videoControlPanel = new JPanel(); // Holds all the video control buttons (in controls Panel)
 		
-		CustomControlPanel controls = new CustomControlPanel(videoPanel, progress, lblTime, bar, videoControlPanel);
+		JTextField insertionTime = new JTextField();
+		insertionTime.setEditable(false);
+		insertionTime.setColumns(8);
+		
+		ProgressDisplayPanel controls = new ProgressDisplayPanel(videoPanel, progress, lblTime, bar, videoControlPanel, video, insertionTime);
 		
 		//-------------------------------------------------->
 		
@@ -157,11 +163,11 @@ public class MainFrame extends JFrame {
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		rightContentPanel.add(tabbedPane);
 				
-		TextEditingPanel textEditingPanel = new TextEditingPanel(video, videoName, thisFrame); // Right side of the split pane
+		TextEditingPanel textEditingPanel = new TextEditingPanel(video, videoName, thisFrame, insertionTime); // Right side of the split pane
 		tabbedPane.addTab("Commentary", null, textEditingPanel, null);
 		
-		JPanel panel = new JPanel();
-		tabbedPane.addTab("Audio Options", null, panel, null);
+		/*JPanel panel = new JPanel();
+		tabbedPane.addTab("Audio Options", null, panel, null);*/
 		
 		// Adding the two different panels to the two sides of the split pane ---------------->
 		JSplitPane splitPane = new JSplitPane();
@@ -172,7 +178,7 @@ public class MainFrame extends JFrame {
 		splitPane.setDividerLocation(700 + splitPane.getInsets().left);		
 		
 		// Top menu bar implementation -------------------------------------------------->
-		MenuBar menuBar = new MenuBar(video, this, splitPane, vidLength, bar);
+		MenuBar menuBar = new MenuBar(video, this, splitPane, vidLength, bar, videoPanel);
 		setJMenuBar(menuBar);
 	
 		// Video manipulation implementation ------------------------------------------------->
@@ -194,8 +200,12 @@ public class MainFrame extends JFrame {
 
 		while(vidLength[0] == 0) {
 			vidLength[0] = (int)((video.getLength())/1000);
+
 		}	
 		bar.setMaximum(vidLength[0]);
+		
+		System.out.println(bar.getMaximum());
+		System.out.println(bar.getWidth());
 		
 		// Timer for updating the label and progress bar every half a second
 		Timer timer = new Timer(500, new ActionListener() {
