@@ -52,7 +52,7 @@ public class MainFrame extends JFrame {
 	public MainFrame(String videoPath) {
 		setTitle("VIDIVOX prototype - Video editing Platform");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 50, 1000, 650);
+		setBounds(100, 50, 1025, 675);
 		final JFrame thisFrame = this;
 		currentVideoPath = videoPath;
 
@@ -165,9 +165,6 @@ public class MainFrame extends JFrame {
 				
 		TextEditingPanel textEditingPanel = new TextEditingPanel(video, videoName, thisFrame, insertionTime); // Right side of the split pane
 		tabbedPane.addTab("Commentary", null, textEditingPanel, null);
-		
-		/*JPanel panel = new JPanel();
-		tabbedPane.addTab("Audio Options", null, panel, null);*/
 		
 		// Adding the two different panels to the two sides of the split pane ---------------->
 		JSplitPane splitPane = new JSplitPane();
