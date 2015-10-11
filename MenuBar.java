@@ -13,6 +13,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -23,7 +24,7 @@ import uk.co.caprica.vlcj.player.MediaPlayer;
 
 public class MenuBar extends JMenuBar{
 	
-	public MenuBar(final MediaPlayer video, final MainFrame mainFrame, final JSplitPane splitPane, final int[] vidLength, final JProgressBar bar){
+	public MenuBar(final MediaPlayer video, final MainFrame mainFrame, final JSplitPane splitPane, final int[] vidLength, final JProgressBar bar, final JPanel videoPanel){
 				
 		JMenu mnFile = new JMenu("File");
 		this.add(mnFile);
@@ -59,24 +60,14 @@ public class MenuBar extends JMenuBar{
 		
 		JMenu window = new JMenu("Window");
 		this.add(window);
-		
-		JMenuItem hideEditor = new JMenuItem("Hide Side Panel");
-		hideEditor.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-			}
-		});
-		window.add(hideEditor);
-		
+			
 		JMenuItem restoreWindow = new JMenuItem("Restore Window");
 		restoreWindow.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				mainFrame.setBounds(100, 50, 1000, 650);
-				splitPane.setDividerLocation(700 + splitPane.getInsets().left);
+				mainFrame.setBounds(100, 50, 1025, 675);				
 			}
 		});
-		window.add(restoreWindow);
-		
+		window.add(restoreWindow);		
 
 		
 		JMenu help = new JMenu("Help");
