@@ -36,7 +36,7 @@ public class TextEditingPanel extends JPanel{
 	private ArrayList<Integer> killPID = new ArrayList<Integer>();
 	int festID = 0; // Process ID is very unlikely to be 0
 	
-	public TextEditingPanel(final MediaPlayer video, final String[] videoName, final JFrame thisFrame, JTextField insertionTime){
+	public TextEditingPanel(final MediaPlayer video, final String[] videoName, final JFrame thisFrame, final JTextField insertionTime){
 		
 		this.setLayout(new BorderLayout());
 		this.setMinimumSize(new Dimension(300, 500));
@@ -83,24 +83,11 @@ public class TextEditingPanel extends JPanel{
 		
 		final JButton btnSpeak = new JButton("Speak");
 		btnSpeak.setEnabled(false);
-		btnSpeak.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				if(killPID.isEmpty()){
-					
-					System.out.println(killPID.size());
-				// Speak commentary to the user through festival text-to-speech (DOESNT WORK PROPERLY)
-				BgFestival bg = new BgFestival(txtrCommentary.getText(), killPID);
-				bg.execute();
-				}
-				System.out.println(killPID.size());
-				killPID.removeAll(killPID);			
-				System.out.println(killPID.size());
-			}
-		});
+		
 		festivalControl.add(btnSpeak);
 		
-		JButton btnStop = new JButton("Stop");
+		final JButton btnStop = new JButton("Stop");
+		btnStop.setEnabled(false);
 		btnStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// Kill the festival process (Stop speaking)
@@ -122,8 +109,24 @@ public class TextEditingPanel extends JPanel{
 		festivalControl.add(btnStop);
 		centerPanel.add(festivalControl);
 		
-		centerPanel.add(Box.createRigidArea(new Dimension(0, 25)));  // Blank space for formatting purposes
+		//centerPanel.add(Box.createRigidArea(new Dimension(0, 25)));  // Blank space for formatting purposes
 		
+		btnSpeak.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				if(killPID.isEmpty()){
+					btnStop.setEnabled(true);
+					System.out.println(killPID.size());
+				// Speak commentary to the user through festival text-to-speech (DOESNT WORK PROPERLY)
+				BgFestival bg = new BgFestival(txtrCommentary.getText(), killPID);
+				bg.execute();
+				}
+				System.out.println(killPID.size());
+				killPID.removeAll(killPID);		
+				
+				System.out.println(killPID.size());
+			}
+		});
 		
 		txtrCommentary.addKeyListener(new KeyAdapter() {
 		    public void keyReleased(KeyEvent event) {
@@ -133,6 +136,7 @@ public class TextEditingPanel extends JPanel{
 		        	btnSpeak.setEnabled(true);
 		        } else {
 		        	btnSpeak.setEnabled(false);
+		        	btnStop.setEnabled(false);
 		        }
 		    }
 		});
@@ -165,13 +169,22 @@ public class TextEditingPanel extends JPanel{
 		echoSlider.setPaintLabels(true);
 		audioOptions.add(echoSlider);
 		
-		audioOptions.add(Box.createRigidArea(new Dimension(0, 50))); // Blank space for formatting purposes
+		audioOptions.add(Box.createRigidArea(new Dimension(0, 100))); // Blank space for formatting purposes
 				
-		JLabel lblinsertionTime = new JLabel("Insert at Time: ");
+		JLabel lblinsertionTime = new JLabel("Insert at Time:");
 		lblinsertionTime.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		audioOptions.add(lblinsertionTime);
 		
 		audioOptions.add(insertionTime);
+		
+		JButton btndefaultTime = new JButton("Set at 0 s");
+		btndefaultTime.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				insertionTime.setText("0s");
+			}
+		});
+		
+		audioOptions.add(btndefaultTime);
 		
 		//--------------------------------------------------------------------------->		
 		
@@ -198,7 +211,7 @@ public class TextEditingPanel extends JPanel{
 	   			}
 			}
 		});
-		commentaryOptions.add(btnSaveAs, BorderLayout.CENTER);
+		commentaryOptions.add(btnSaveAs);
 		
 		//--------------------------------------------------------------------------->
 		
@@ -238,7 +251,7 @@ public class TextEditingPanel extends JPanel{
 							if(!saveVideo.cancelClicked){
 								if(line.equals("0")) {
 									String videoPath = HelperFile.getCurrentVideoPath(); // Video to merge with is the one currently playing
-									System.out.println("through");
+								
 									HelperFile.mergeMp3(mp3Path, videoPath, thisFrame, videoName);
 									
 									int n = JOptionPane.showConfirmDialog(thisFrame, "Successfully merged "+ HelperFile.getBasename(mp3Path) +" with "+ HelperFile.getBasename(videoPath) +".\n Would you like to play it now?", "alert", JOptionPane.OK_CANCEL_OPTION);
@@ -259,7 +272,7 @@ public class TextEditingPanel extends JPanel{
 										    		
 			    	} else {
 			    		// Navigate to an error dialog
-			    		JOptionPane.showMessageDialog(thisFrame, "Please make sure the file you have chosen is an audio file (.mp3).");
+			    		JOptionPane.showMessageDialog(thisFrame, "Please make sure the file you have chosen is an audio file (.mp3).", null , JOptionPane.INFORMATION_MESSAGE);
 			    	}
 			    }
 			}
