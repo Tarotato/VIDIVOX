@@ -17,9 +17,10 @@ import java.awt.event.ActionListener;
 
 
 /** 
- * @author Isabel Zhuang and Rebecca Lee
+ * @author Isabel Zhuang
  * Class contains implementation for generating a dialog for naming an mp3 or video file.
  */
+@SuppressWarnings("serial")
 public class saveAsDialog extends JDialog {
 
     private final JPanel contentPanel = new JPanel();
@@ -33,11 +34,12 @@ public class saveAsDialog extends JDialog {
     	
     	final JDialog thisDialog = this;
     	
-        setBounds(200, 200, 450, 250);
+    	// Formatting
+        setBounds(200, 200, 425, 225);
         getContentPane().setLayout(new BorderLayout());
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         getContentPane().add(contentPanel, BorderLayout.CENTER);
-        contentPanel.setLayout(null);
+        contentPanel.setLayout(new BorderLayout(0, 0));
         
         JLabel lblNameYour = new JLabel("Name your MP3 file");
         if(type.equals("video")) {
@@ -46,25 +48,29 @@ public class saveAsDialog extends JDialog {
         lblNameYour.setFont(new Font("Tahoma", Font.PLAIN, 20));
         lblNameYour.setHorizontalAlignment(SwingConstants.CENTER);
         lblNameYour.setBounds(75, 44, 350, 40);
-        contentPanel.add(lblNameYour);
+        contentPanel.add(lblNameYour, BorderLayout.CENTER);
+        
+		JPanel panel = new JPanel();
+		contentPanel.add(panel, BorderLayout.SOUTH);
         
         JLabel lblMpName = new JLabel("Name:");
         lblMpName.setBounds(90, 130, 110, 20);
-        contentPanel.add(lblMpName);
+        panel.add(lblMpName);
         
         textField = new JTextField();
         textField.setBounds(160, 130, 150, 20);
-        contentPanel.add(textField);
+        panel.add(textField);
         textField.setColumns(10); 
         
+        // Sets text depending on what the user has to chosen to save
         if(type.equals("mp3")) {
 			JLabel lblmp3 = new JLabel(".mp3");
 	        lblmp3.setBounds(350, 130, 110, 20);
-	        contentPanel.add(lblmp3);
+	        panel.add(lblmp3);
 		} else {
 			JLabel lblmp3 = new JLabel(".avi");
 	        lblmp3.setBounds(350, 130, 110, 20);
-	        contentPanel.add(lblmp3);
+	        panel.add(lblmp3);
 		}
                 
         JPanel buttonPane = new JPanel();
@@ -79,7 +85,7 @@ public class saveAsDialog extends JDialog {
 	        		if(type.equals("mp3")) {
 	        			HelperFile.saveAsMp3(commentary, textField.getText().trim(), thisDialog); // Will save commentary as mp3
 	        		} else {
-	        			MainFrame.videoName[0] = textField.getText().trim(); // Gets the user-entered video name for executing further commands      			
+	        			MainFrame.videoName[0] = textField.getText().trim(); // Else gets the user-entered video name for executing further commands      			
 	        			thisDialog.dispose();
 	        		}	
         		}else{
@@ -96,10 +102,9 @@ public class saveAsDialog extends JDialog {
         		cancelClicked = true;
         		thisDialog.dispose();
         	}
-	});
+        });
         cancelButton.setActionCommand("Cancel");
-        buttonPane.add(cancelButton);
-    
+        buttonPane.add(cancelButton);    
     }
 }
 
