@@ -18,17 +18,16 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 import java.awt.Font;
-import java.io.File;
-
 import javax.swing.JTextField;
 
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 
 /**
- * @author Isabel Zhuang and Rebecca Lee
+ * @author Isabel Zhuang
  * Class contains implementation and graphical user interface code for the starting frame.
  */
+@SuppressWarnings("serial")
 public class StartFrame extends JFrame {
 
 	private JPanel contentPane;
@@ -43,8 +42,9 @@ public class StartFrame extends JFrame {
 		try
 		{
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch(Exception e)
-		{}
+		} catch(Exception e){
+			e.printStackTrace();
+		}
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -90,8 +90,7 @@ public class StartFrame extends JFrame {
 		
 		JButton btnBrowse = new JButton("Browse");
 		btnBrowse.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
+			public void actionPerformed(ActionEvent e) {				
 				// Allows user to choose their own video file to play
 				JFileChooser videoChooser = new JFileChooser(System.getProperty("user.dir") + "/VideoFiles/");
 				FileNameExtensionFilter filter = new FileNameExtensionFilter("Video File", "avi");
