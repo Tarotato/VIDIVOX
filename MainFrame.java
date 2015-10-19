@@ -26,22 +26,21 @@ import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent; 
 
 /**
- * @author Isabel Zhuang and Rebecca Lee
+ * @author Isabel Zhuang
  * Class contains implementation and graphical user interface code for the main frame.
  */
+@SuppressWarnings("serial")
 public class MainFrame extends JFrame {
 	
-	int festID = 0; //because process ID is very unlikely to be 0
+	int festID = 0; // Process ID is very unlikely to be 0
 	static boolean playClicked = true;
-	//static boolean muteClicked = false;
-	int[] muteClicked = {1};
+	int[] muteClicked = {1}; // Initialize as array so final value can be changed
 	static boolean stopForward = false;
 	
 	protected EmbeddedMediaPlayerComponent component = new EmbeddedMediaPlayerComponent();
 	protected MediaPlayer video;
 	protected static String currentVideoPath;
 	protected static String mp3Name = null;
-	//protected static String videoName = "";
 	protected static String[] videoName = {""};
 	
 	final protected int[] vidLength = {0}; // Initialize as array so final value can be changed
@@ -50,48 +49,48 @@ public class MainFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public MainFrame(String videoPath) {
-		setTitle("VIDIVOX prototype - Video editing Platform");
+		setTitle("VIDIVOX alpha");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 50, 1025, 675);
+		setBounds(100, 50, 1050, 700);
 		final JFrame thisFrame = this;
 		currentVideoPath = videoPath;
 
 		// Video player implementation -------------------------------------------------->
 		JPanel videoPanel = new JPanel(); // Left side of the split pane
         videoPanel.setLayout(new BorderLayout());
+        videoPanel.setMinimumSize(new Dimension(300, 500)); // Sets minimum dimensions for resizing purposes
         
         // Add a media component
         videoPanel.add(component, BorderLayout.CENTER);
         video = component.getMediaPlayer();
-        
-        //-------------------------------------------------->
-	
-		JPanel progress = new JPanel(); // Holds the time in seconds and the progress bar (in controls Panel)
-		
-		final JLabel lblTime = new JLabel("0 s"); // Shows the time in seconds since the start of video (GUI)
-		
+       
+        // Video controls implementation-------------------------------------------------->	
+		JPanel progress = new JPanel(); // Holds the time in seconds and the progress bar (in controls Panel)		
+		final JLabel lblTime = new JLabel("0 s"); // Shows the time in since the start of video (GUI)		
 		final JProgressBar bar = new JProgressBar(); // Shows the progress of the video (GUI)
-
 		JPanel videoControlPanel = new JPanel(); // Holds all the video control buttons (in controls Panel)
+		final JLabel totalTime = new JLabel("0 s"); // Shows the total time of the video
 		
-		JTextField insertionTime = new JTextField();
+		JTextField insertionTime = new JTextField(); // Holds the time of insertion the user selects
 		insertionTime.setEditable(false);
 		insertionTime.setColumns(8);
 		
 		ProgressDisplayPanel controls = new ProgressDisplayPanel(videoPanel, progress, lblTime, bar, videoControlPanel, video, insertionTime);
 		
-		//-------------------------------------------------->
-		
+		// Button implementation-------------------------------------------------->		
 		// Initialize all the buttons in video_control Panel
 		JButton btnSkipBack = new JButton();
 		btnSkipBack.setIcon(new ImageIcon(this.getClass().getResource("/buttons/skipb.png")));
+		
 		JButton btnRewind = new JButton();
 		btnRewind.setIcon(new ImageIcon(this.getClass().getResource("/buttons/rewind.png")));
+		
 		final JButton btnPlay = new JButton();
 		btnPlay.setIcon(new ImageIcon(this.getClass().getResource("/buttons/pause.png")));
-		//btnPlay.setIcon(new ImageIcon("buttons/pause.png"));
+		
 		JButton btnForward = new JButton();
 		btnForward.setIcon(new ImageIcon(this.getClass().getResource("/buttons/forward.png")));
+		
 		JButton btnSkipForward = new JButton();
 		btnSkipForward.setIcon(new ImageIcon(this.getClass().getResource("/buttons/skipf.png")));
 		
@@ -150,12 +149,9 @@ public class MainFrame extends JFrame {
 		});
 		videoControlPanel.add(btnSkipForward);
 		
-		//-------------------------------------------------->
-		
-		VolumeControlPanel volume_control = new VolumeControlPanel(video, muteClicked);
-		controls.add(volume_control);	
-		
-		videoPanel.setMinimumSize(new Dimension(300, 500)); // Sets minimum dimensions for resizing purposes
+		// Volume control implementation-------------------------------------------------->		
+		VolumeControlPanel volumeControl = new VolumeControlPanel(video, muteClicked);
+		controls.add(volumeControl);		
 		
 		// Audio editing implementation ---------------------------------------------------->
 		JPanel rightContentPanel = new JPanel();
@@ -172,7 +168,7 @@ public class MainFrame extends JFrame {
 		splitPane.setResizeWeight(0.8); // Resizes the frames in a 8:2 ratio
 		splitPane.setLeftComponent(videoPanel);
 		splitPane.setRightComponent(rightContentPanel);
-		splitPane.setDividerLocation(700 + splitPane.getInsets().left);		
+		splitPane.setDividerLocation(700 + splitPane.getInsets().left);
 		
 		// Top menu bar implementation -------------------------------------------------->
 		MenuBar menuBar = new MenuBar(video, this, splitPane, vidLength, bar, videoPanel);
@@ -194,15 +190,12 @@ public class MainFrame extends JFrame {
 		    }
 		});
 		
-
+		// Set the length of the progress bar
 		while(vidLength[0] == 0) {
 			vidLength[0] = (int)((video.getLength())/1000);
 
 		}	
 		bar.setMaximum(vidLength[0]);
-		
-		System.out.println(bar.getMaximum());
-		System.out.println(bar.getWidth());
 		
 		// Timer for updating the label and progress bar every half a second
 		Timer timer = new Timer(500, new ActionListener() {
@@ -227,6 +220,9 @@ public class MainFrame extends JFrame {
 			}
 		});
 		timer.start();
+
+		ProgressDisplayPanel.setTotalTime(video, totalTime );
+		progress.add(totalTime);
 		
 		// For fixing problem where video being muted to start with, when last execution exits while muted.
 	    addWindowListener(new WindowAdapter() {
