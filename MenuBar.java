@@ -22,10 +22,16 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import uk.co.caprica.vlcj.player.MediaPlayer;
 
+/**
+ * @author Isabel Zhuang
+ * Class creates the menu bar with custom functions  
+ */
+@SuppressWarnings("serial")
 public class MenuBar extends JMenuBar{
 	
 	public MenuBar(final MediaPlayer video, final MainFrame mainFrame, final JSplitPane splitPane, final int[] vidLength, final JProgressBar bar, final JPanel videoPanel){
-				
+		
+		// Lets user open a new video file
 		JMenu mnFile = new JMenu("File");
 		this.add(mnFile);
 		
@@ -58,8 +64,9 @@ public class MenuBar extends JMenuBar{
 		});
 		mnFile.add(mntmOpenNewVideo);
 		
-		JMenu window = new JMenu("Window");
-		this.add(window);
+		// Lets user restore the window back to original size
+		JMenu mnWindow = new JMenu("Window");
+		this.add(mnWindow);
 			
 		JMenuItem restoreWindow = new JMenuItem("Restore Window");
 		restoreWindow.addActionListener(new ActionListener() {
@@ -67,14 +74,14 @@ public class MenuBar extends JMenuBar{
 				mainFrame.setBounds(100, 50, 1025, 675);				
 			}
 		});
-		window.add(restoreWindow);		
+		mnWindow.add(restoreWindow);		
 
-		
+		// Let user have access to the VIDIVOX guide
 		JMenu help = new JMenu("Help");
 		this.add(help);
 		
-		JMenuItem instructions = new JMenuItem("VIDIVOX Guide");
-		instructions.addActionListener(new ActionListener() {
+		JMenuItem mnInstructions = new JMenuItem("VIDIVOX Guide");
+		mnInstructions.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
 				JFrame guide = new JFrame();
@@ -86,10 +93,9 @@ public class MenuBar extends JMenuBar{
 				JTextArea txtrGuide = new JTextArea(); // TextArea for user to enter their commentary
 				txtrGuide.setLineWrap(true);
 				txtrGuide.setEditable(false);
-				//txtrGuide.setText("stuff[0x7fb1d0001268] main vout display error: Failed to resize display[0x7fb1d0001268] main vout display error: Failed to resize display[0x7fb1d0001268] main vout display error: Failed to resize display[0x7fb1d0001268] main vout display error: Failed to resize display[0x7fb1d0001268] main vout display error: Failed to resize display[0x7fb1d0001268] main vout display error: Failed to resize display[0x7fb1d0001268] main vout display error: Failed to resize display[0x7fb1d0001268] main vout display error: Failed to resize display[0x7fb1d0001268] main vout display error: Failed to resize display[0x7fb1d0001268] main vout display error: Failed to resize display[0x7fb1d0001268] main vout display error: Failed to resize display[0x7fb1d0001268] main vout display error: Failed to resize display[0x7fb1d0001268] main vout display error: Failed to resize display[0x7fb1d0001268] main vout display error: Failed to resize display[0x7fb1d0001268] main vout display error: Failed to resize display[0x7fb1d0001268] main vout display error: Failed to resize display[0x7fb1d0001268] main vout display error: Failed to resize display[0x7fb1d0001268] main vout display error: Failed to resize display");
 				
+				// Sets text area form a text file
 				File file = new File(System.getProperty("user.dir")+"/VIDIVOX_Guide");
-				
 				FileReader reader;
 				try {
 					reader = new FileReader( file );
@@ -97,19 +103,14 @@ public class MenuBar extends JMenuBar{
 				txtrGuide.read( br, null );
 				br.close();
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
-				}
-			
+				}			
 				
-				scrollPane.setViewportView(txtrGuide);
-				
-				guide.setVisible(true);
-				//JOptionPane.showMessageDialog(mainFrame, "inrto", "VIDIVOX GUIDE", JOptionPane.CLOSED_OPTION);
-				
+				scrollPane.setViewportView(txtrGuide);				
+				guide.setVisible(true);				
 			}
 		});
-		help.add(instructions);
+		help.add(mnInstructions);
 	}
 
 }
