@@ -16,6 +16,11 @@ import javax.swing.event.ChangeListener;
 
 import uk.co.caprica.vlcj.player.MediaPlayer;
 
+/**
+ * @author Isabel Zhuang
+ * Class holds the objects for volume control implementation
+ */
+@SuppressWarnings("serial")
 public class VolumeControlPanel extends JPanel {
 
 	public VolumeControlPanel(final MediaPlayer video, final int[] muteClicked) {
@@ -44,8 +49,7 @@ public class VolumeControlPanel extends JPanel {
 		btnMute.setIcon(new ImageIcon(this.getClass().getResource("/buttons/unmute.png")));
 		btnMute.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// Toggle the mute for the video depending on boolean variable
-				// muteClicked
+				// Toggle the mute for the video depending on boolean variable muteClicked
 				if (0 != muteClicked[0]) {
 					btnMute.setIcon(new ImageIcon(this.getClass().getResource("/buttons/mute.png")));
 					video.mute(); // Toggles mute
@@ -59,5 +63,4 @@ public class VolumeControlPanel extends JPanel {
 		});
 		panel_1.add(btnMute);
 	}
-
 }
