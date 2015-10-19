@@ -1,11 +1,16 @@
 package vidivox_beta;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -62,7 +67,7 @@ public class HelperFile {
 		
 		//Determine whether it is an mp3 file
 	    String cmd = "file "+ path;
-		
+
 		//Determine if file chosen is a video file
 		ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", cmd);
 		Process process;
@@ -130,6 +135,12 @@ public class HelperFile {
 		}					
 	}
 	
+	/**
+	 * Generates an mp3 file from the written commentary (text)
+	 * @param commentary
+	 * @param name
+	 * @param thisDialog
+	 */
 	protected static void saveAsMp3(String commentary, String name, JDialog thisDialog) {
 		if (commentary != null) {
 	   		
@@ -157,6 +168,11 @@ public class HelperFile {
 						
 				// Generate an .mp3 file if none already exists
 				if(line.equals("0")) {
+					// Adds period of silence to the beginning of the mp3 if needed
+					if(ProgressDisplayPanel.silenceTime>0){
+						addSilence(ProgressDisplayPanel.silenceTime);
+					}					
+					
 					cmd = "ffmpeg -i ./MP3Files/.sound.wav \'./MP3Files/" + name + ".mp3\'";
 					startProcess(cmd);
 							
@@ -175,15 +191,52 @@ public class HelperFile {
 	}
 	
 	/**
+	 *  Concatenates silence at the start of a .wav file 
+	 * @param silenceLength
+	 * @throws InterruptedException 
+	 */
+	protected static void addSilence(int silenceLength) throws InterruptedException{
+		String cmd = "";
+		try{
+			//Creates a silent wav file
+			cmd = "ffmpeg -y -f lavfi -i aevalsrc=0:0:0:0:0:0:0::duration="+silenceLength+" ./MP3Files/.silence.wav";
+			startProcess(cmd);
+			
+			// Concatenates the silent wav with the mp3 file
+			cmd = "ffmpeg -y -i ./MP3Files/.silence.wav -i ./MP3Files/.sound.wav -filter_complex '[0:0][1:0]concat=n=2:v=0:a=1[combined];[combined]volume=3[out]' -map '[out]' ./MP3Files/.withSilence.wav";
+			startProcess(cmd);
+			
+			Thread.sleep(1000);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	protected static void getDuration(String mp3Path){
+		File file = new File(mp3Path);
+		AudioInputStream audioInputStream;
+		try {
+			audioInputStream = AudioSystem.getAudioInputStream(file);
+			
+		AudioFormat format = audioInputStream.getFormat();
+		long audioFileLength = file.length();
+		int frameSize = format.getFrameSize();
+		float frameRate = format.getFrameRate();
+		float durationInSeconds = (audioFileLength / (frameSize * frameRate)); // Calculates the time of the audio file		
+		} catch (UnsupportedAudioFileException | IOException e) {
+			e.printStackTrace();
+		}	
+	}
+	
+	/**
 	 * Starts building a process for any BASH command passed in
 	 * @param cmd
 	 * @throws IOException
 	 */
 	private static void startProcess(String cmd) throws IOException{
 		builder = new ProcessBuilder("/bin/bash", "-c", cmd);
-		process = builder.start();
-		
-		
+		process = builder.start();		
 	}
 	
 	/**

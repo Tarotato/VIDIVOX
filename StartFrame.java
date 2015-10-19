@@ -6,6 +6,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.JButton;
@@ -39,6 +40,11 @@ public class StartFrame extends JFrame {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		try
+		{
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch(Exception e)
+		{}
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -56,7 +62,6 @@ public class StartFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public StartFrame() {
-		new File(System.getProperty("user.dir")+"/MP3Files").mkdirs();
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(300, 150, 500, 300);

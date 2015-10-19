@@ -1,9 +1,12 @@
 package vidivox_beta;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,6 +24,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -31,7 +36,7 @@ public class TextEditingPanel extends JPanel{
 	private ArrayList<Integer> killPID = new ArrayList<Integer>();
 	int festID = 0; // Process ID is very unlikely to be 0
 	
-	public TextEditingPanel(final MediaPlayer video, final String[] videoName, final JFrame thisFrame){
+	public TextEditingPanel(final MediaPlayer video, final String[] videoName, final JFrame thisFrame, final JTextField insertionTime){
 		
 		this.setLayout(new BorderLayout());
 		this.setMinimumSize(new Dimension(300, 500));
@@ -55,6 +60,9 @@ public class TextEditingPanel extends JPanel{
 		this.add(northPanel, BorderLayout.NORTH);
 		northPanel.add(Box.createRigidArea(new Dimension(0, 50)));
 		northPanel.add(lblEnterYourCommentary, BorderLayout.NORTH);
+		
+		JPanel southPanel = new JPanel(); // Another panel for formatting purposes
+		this.add(southPanel, BorderLayout.SOUTH);
 				
 		//--------------------------------------------------------------------------->
 		
@@ -73,25 +81,13 @@ public class TextEditingPanel extends JPanel{
 		centerPanel.add(festivalControl);
 		festivalControl.setLayout(new BoxLayout(festivalControl, BoxLayout.X_AXIS));
 		
-		JButton btnSpeak = new JButton("Speak");
-		btnSpeak.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				if(killPID.isEmpty()){
-					
-					System.out.println(killPID.size());
-				// Speak commentary to the user through festival text-to-speech (DOESNT WORK PROPERLY)
-				BgFestival bg = new BgFestival(txtrCommentary.getText(), killPID);
-				bg.execute();
-				}
-				System.out.println(killPID.size());
-				killPID.removeAll(killPID);			
-				System.out.println(killPID.size());
-			}
-		});
+		final JButton btnSpeak = new JButton("Speak");
+		btnSpeak.setEnabled(false);
+		
 		festivalControl.add(btnSpeak);
 		
-		JButton btnStop = new JButton("Stop");
+		final JButton btnStop = new JButton("Stop");
+		btnStop.setEnabled(false);
 		btnStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// Kill the festival process (Stop speaking)
@@ -113,17 +109,90 @@ public class TextEditingPanel extends JPanel{
 		festivalControl.add(btnStop);
 		centerPanel.add(festivalControl);
 		
-		centerPanel.add(Box.createRigidArea(new Dimension(0, 50)));  // Blank space for formatting purposes
+		//centerPanel.add(Box.createRigidArea(new Dimension(0, 25)));  // Blank space for formatting purposes
+		
+		btnSpeak.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				if(killPID.isEmpty()){
+					btnStop.setEnabled(true);
+					System.out.println(killPID.size());
+				// Speak commentary to the user through festival text-to-speech (DOESNT WORK PROPERLY)
+				BgFestival bg = new BgFestival(txtrCommentary.getText(), killPID);
+				bg.execute();
+				}
+				System.out.println(killPID.size());
+				killPID.removeAll(killPID);		
+				
+				System.out.println(killPID.size());
+			}
+		});
+		
+		txtrCommentary.addKeyListener(new KeyAdapter() {
+		    public void keyReleased(KeyEvent event) {
+		    	 
+		        String content = txtrCommentary.getText();
+		        if (!content.equals("")) {
+		        	btnSpeak.setEnabled(true);
+		        } else {
+		        	btnSpeak.setEnabled(false);
+		        	btnStop.setEnabled(false);
+		        }
+		    }
+		});
 		
 		//--------------------------------------------------------------------------->
+		JPanel audioOptions = new JPanel();
+		audioOptions.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		centerPanel.add(audioOptions);
 		
-		JPanel commentaryOptions = new JPanel(); // Another panel for formatting purposes
-		centerPanel.add(commentaryOptions);		
+
+		JLabel lblPitch = new JLabel("Pitch");
+		lblPitch.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		audioOptions.add(lblPitch);
+		
+		JSlider pitchSlider = new JSlider(1, 5, 3); 
+		pitchSlider.setMinorTickSpacing(1);
+		pitchSlider.setMajorTickSpacing(1);
+		pitchSlider.setPaintTicks(true);
+	    pitchSlider.setPaintLabels(true);
+		audioOptions.add(pitchSlider);
 				
-		JLabel lblsaveCommentary = new JLabel("Save your commentary as an MP3:", SwingConstants.CENTER);
-		lblsaveCommentary.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		commentaryOptions.add(lblsaveCommentary);
+		JLabel lblEcho = new JLabel("Echo");
+		lblEcho.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		audioOptions.add(lblEcho);
 		
+		JSlider echoSlider = new JSlider(1, 5, 3); 
+		echoSlider.setMinorTickSpacing(1);
+		echoSlider.setMajorTickSpacing(1);
+		echoSlider.setPaintTicks(true);
+		echoSlider.setPaintLabels(true);
+		audioOptions.add(echoSlider);
+		
+		audioOptions.add(Box.createRigidArea(new Dimension(0, 100))); // Blank space for formatting purposes
+				
+		JLabel lblinsertionTime = new JLabel("Insert at Time:");
+		lblinsertionTime.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		audioOptions.add(lblinsertionTime);
+		
+		audioOptions.add(insertionTime);
+		
+		JButton btndefaultTime = new JButton("Set at 0 s");
+		btndefaultTime.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				insertionTime.setText("0s");
+			}
+		});
+		
+		audioOptions.add(btndefaultTime);
+		
+		//--------------------------------------------------------------------------->		
+		
+		// Let user select an .mp3 file to merge with current video
+	
+		JPanel commentaryOptions = new JPanel(); // Another panel for formatting purposes
+		southPanel.add(commentaryOptions);		
+
 		// Save input in text area as .wav file and convert it to an .mp3
 		JButton btnSaveAs = new JButton("Save as MP3");
 		btnSaveAs.addActionListener(new ActionListener() {
@@ -142,19 +211,10 @@ public class TextEditingPanel extends JPanel{
 	   			}
 			}
 		});
-		commentaryOptions.add(btnSaveAs, BorderLayout.CENTER);	
-		
-		commentaryOptions.add(Box.createRigidArea(new Dimension(0, 50))); // Blank space for formatting purposes
+		commentaryOptions.add(btnSaveAs);
 		
 		//--------------------------------------------------------------------------->
 		
-		JLabel lblmergeWith = new JLabel("Merge your current video with an MP3:");
-		lblmergeWith.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		commentaryOptions.add(lblmergeWith);
-		
-		commentaryOptions.add(Box.createRigidArea(new Dimension(0, 50))); // Blank space for formatting purposes
-		
-		// Let user select an .mp3 file to merge with current video
 		JButton btnMerge = new JButton("Merge With MP3");
 		btnMerge.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -191,7 +251,7 @@ public class TextEditingPanel extends JPanel{
 							if(!saveVideo.cancelClicked){
 								if(line.equals("0")) {
 									String videoPath = HelperFile.getCurrentVideoPath(); // Video to merge with is the one currently playing
-									System.out.println("through");
+								
 									HelperFile.mergeMp3(mp3Path, videoPath, thisFrame, videoName);
 									
 									int n = JOptionPane.showConfirmDialog(thisFrame, "Successfully merged "+ HelperFile.getBasename(mp3Path) +" with "+ HelperFile.getBasename(videoPath) +".\n Would you like to play it now?", "alert", JOptionPane.OK_CANCEL_OPTION);
@@ -212,7 +272,7 @@ public class TextEditingPanel extends JPanel{
 										    		
 			    	} else {
 			    		// Navigate to an error dialog
-			    		JOptionPane.showMessageDialog(thisFrame, "Please make sure the file you have chosen is an audio file (.mp3).");
+			    		JOptionPane.showMessageDialog(thisFrame, "Please make sure the file you have chosen is an audio file (.mp3).", null , JOptionPane.INFORMATION_MESSAGE);
 			    	}
 			    }
 			}
