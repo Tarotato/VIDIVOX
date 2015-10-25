@@ -1,41 +1,30 @@
 package vidivox_beta;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import uk.co.caprica.vlcj.player.MediaPlayer;
 
+import commentary_manipulation.TextEditingPanel;
 
 /**
  * @author Isabel Zhuang
  * Class contains necessary methods for completing actions in MainFrame
  */
 public class HelperFile {
-
 	private static ProcessBuilder builder;
 	private static Process process;
-//	protected static PleaseWaitDialog waitdialog;
-	
 	/**
 	 * Checks if the chosen file path from JFileChooser is a video (avi/mpeg4)
 	 * @param path
 	 * @return
 	 */
-	protected static boolean isVideo(String path) {
-		
-		String cmd = "file "+ path;
-		
+	public static boolean isVideo(String path) {		
+		String cmd = "file "+ path;		
 		// Determines if the file path chosen is a video file
 		ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", cmd);
 		Process process;
@@ -64,10 +53,8 @@ public class HelperFile {
 	 * @param path
 	 * @return
 	 */
-	protected static boolean isMp3(String path) {
-		
+	public static boolean isMp3(String path) {		
 	    String cmd = "file "+ path;
-
 		//Determine if file chosen is a audio file
 		ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", cmd);
 		Process process;
@@ -87,56 +74,6 @@ public class HelperFile {
 		}		
 		return false;		
 	}
-
-	//Unused Method
-/*	*//**
-	 * Uses BASH commands to generate an output video merged with the selected mp3 file 
-	 * @param mp3Path
-	 * @param videoPath
-	 *//*
-	protected static void mergeMp3(String mp3Path, String videoPath, JFrame thisFrame, String[] videoName) {
-		try {
-			JOptionPane.showMessageDialog(thisFrame, "Your video will start merging as soon as you click OK, please be patient while it merges.");
-
-			
-			waitdialog = new PleaseWaitDialog();
-			BgMergeFiles mergeFiles = new BgMergeFiles(videoPath, mp3Path, waitdialog);
-			mergeFiles.execute();
-				
-			waitdialog.setModal(true);
-			waitdialog.setVisible(true);
-					
-			// Deletes any existing output.mp3 file
-			String cmd = "rm -r ./MP3Files/.vidAudio.mp3";
-			startProcess(cmd);			
-			process.waitFor(); // Stops thread from continuing so previous command can finish executing
-			
-			// Creates an mp3 file from the existing video's audio
-			cmd = "ffmpeg -i " + videoPath + " -map 0:1 ./MP3Files/.vidAudio.mp3";
-			startProcess(cmd);			
-			process.waitFor();
-			
-			// Deletes any existing output.mp3 file
-			cmd = "rm -r ./MP3Files/.output.mp3";
-			startProcess(cmd);			
-			process.waitFor();
-			
-			// Creates an mp3 file output.mp3 that combines the video audio and selected mp3 audio for merging 
-			cmd = "ffmpeg -i " + mp3Path + " -i ./MP3Files/.vidAudio.mp3 -filter_complex amix=inputs=2 ./MP3Files/.output.mp3";
-			startProcess(cmd);			
-			process.waitFor();
-			
-			// Creates an output.avi file from merging combined audio (0:0) and existing video stream (1:0)
-			cmd = "ffmpeg -i ./MP3Files/.output.mp3 -i "+ videoPath + " -map 0:0 -map 1:0 -acodec copy -vcodec copy ./VideoFiles/"+MainFrame.videoName[0]+".avi";
-			startProcess(cmd);			
-			process.waitFor(); 
-			
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}					
-	}*/
 	
 	/**
 	 * Generates an mp3 file from the written commentary (text)
@@ -144,42 +81,42 @@ public class HelperFile {
 	 * @param name
 	 * @param thisDialog
 	 */
-	protected static void saveAsMp3(String commentary, String name, JDialog thisDialog) {
-		if (commentary != null) {
-	   		
+	public static void saveAsMp3(String commentary, String name, JDialog thisDialog) {
+		if (commentary != null) {	   		
 			try {
 				String textPath = System.getProperty("user.dir")+ "/.commentary.txt"; // Generate a hidden .txt file containing user commentary
 				BufferedWriter bw = new BufferedWriter(new FileWriter(textPath, false));
 				bw.write(commentary);
 				bw.close();
-						
+				
 				// Generate a hidden sound.wav file from the saved user commentary
-				String cmd = "text2wave " + textPath + " -o ./MP3Files/.sound.wav";
-				startProcess(cmd);		
-				process.waitFor();
-				
+				// Change the speed of the voice if a value is set			
+				if (TextEditingPanel.voiceSpeed != 0){
+					int voiceSpeed = (int) ((1 - TextEditingPanel.voiceSpeed*.25)*100) ;					
+					String scm = "text2wave -o './MP3Files/.sound.wav' './.commentary.txt' -eval \'./.scmFiles/"+voiceSpeed+".scm\'";
+					startProcess(scm);		
+					process.waitFor();					
+				}else{
+					// Generate a hidden sound.wav file from the saved user commentary
+					String cmd = "text2wave " + textPath + " -o ./MP3Files/.sound.wav";
+					startProcess(cmd);		
+					process.waitFor();
+				}				
 				// Find out if any .mp3 file in MP3Files folder has the same name user has entered for MP3 file name
-				cmd = "find | grep -x \"./MP3Files/" + name +".mp3\" | wc -l";
-				startProcess(cmd);
-				
+				String cmd = "find | grep -x \"./MP3Files/" + name +".mp3\" | wc -l";
+				startProcess(cmd);				
 				builder.redirectErrorStream(true);
 				InputStream stdout = process.getInputStream();
 				BufferedReader stdoutBuffered =	new BufferedReader(new InputStreamReader(stdout));
 						
-				String line = stdoutBuffered.readLine();								
-						
+				String line = stdoutBuffered.readLine();					
 				// Generate an .mp3 file if none already exists
-				if(line.equals("0")) {
-					// Adds period of silence to the beginning of the mp3 if not inserted at beginning of video
-					if(ProgressDisplayPanel.silenceTime>0){
-						addSilence(ProgressDisplayPanel.silenceTime, name);
-					}else{
-						// Creates an mp3 without a period of silence
+				if(line.equals("0")) {					
+						// Creates an mp3 if name is not taken
 						cmd = "ffmpeg -i ./MP3Files/.sound.wav \'./MP3Files/" + name + ".mp3\'";
 						startProcess(cmd);
-					}							
-					JOptionPane.showMessageDialog(thisDialog, "Successfully saved "+ name +".mp3 to MP3Files");
-					thisDialog.dispose();						
+						JOptionPane.showMessageDialog(thisDialog, "Successfully saved "+ name +".mp3 to MP3Files");
+						thisDialog.dispose();	
 				} else {
 					// Error dialog if name of mp3 already exists
 					JOptionPane.showMessageDialog(thisDialog, "This name is taken. Please choose another.", null , JOptionPane.INFORMATION_MESSAGE);
@@ -195,48 +132,22 @@ public class HelperFile {
 	 * @param silenceLength
 	 * @throws InterruptedException 
 	 */
-	protected static void addSilence(int silenceLength, String name) throws InterruptedException{
-		String cmd = "";		
+	public static void addSilence(int silenceLength, String mp3Path) throws InterruptedException{	
 		try{
 			silenceLength = (silenceLength*2);
 			//Creates a silent wav file
-			cmd = "ffmpeg -y -f lavfi -i aevalsrc=0:0:0:0:0:0:0::duration="+silenceLength+" ./MP3Files/.silence.wav";
-			startProcess(cmd);
+			String cmd = "ffmpeg -y -f lavfi -i aevalsrc=0:0:0:0:0:0:0::duration="+silenceLength+" ./MP3Files/.silence.wav";
+			builder = new ProcessBuilder("/bin/bash", "-c", cmd);
+			process = builder.start();	
 			
 			// Concatenates the silent wav file with the mp3 file
-			cmd = "ffmpeg -y -i ./MP3Files/.silence.wav -i ./MP3Files/.sound.wav -filter_complex '[0:0][1:0]concat=n=2:v=0:a=1[combined];[combined]volume=1[out]' -map '[out]' './MP3Files/"+name+".mp3'";
-			startProcess(cmd);			
+			cmd = "ffmpeg -y -i ./MP3Files/.silence.wav -i "+mp3Path+" -filter_complex '[0:0][1:0]concat=n=2:v=0:a=1[combined];[combined]volume=1[out]' -map '[out]' './MP3Files/.ouput.mp3'";
+			builder = new ProcessBuilder("/bin/bash", "-c", cmd);
+			process = builder.start();				
 			process.waitFor();
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	/**
-	 * Calculates the length of an audio file
-	 * @param mp3Path
-	 */
-	protected static void getDuration(String mp3Path, MediaPlayer video, JFrame thisFrame){
-		File file = new File(mp3Path);
-		AudioInputStream audioInputStream;
-		try {
-			audioInputStream = AudioSystem.getAudioInputStream(file);
-			
-		AudioFormat format = audioInputStream.getFormat();
-		// Get necessary for calculation 
-		long audioFileLength = file.length();
-		int frameSize = format.getFrameSize();
-		float frameRate = format.getFrameRate();
-		float durationInSeconds = (audioFileLength / (frameSize * frameRate)); // Calculates the time of the audio file		
-		
-		if(durationInSeconds>=((video.getTime())/1000)/60){
-			JOptionPane.showMessageDialog(thisFrame, "Please add video at a suitable time", "Error: Invalid Time" , JOptionPane.ERROR_MESSAGE);
-		}
-		
-		} catch (UnsupportedAudioFileException | IOException e) {
-			e.printStackTrace();
-		}	
 	}
 	
 	/**
@@ -254,7 +165,7 @@ public class HelperFile {
 	 * @param path
 	 * @return
 	 */
-	protected static String getBasename(String path){
+	public static String getBasename(String path){
 		int index = path.lastIndexOf('/');
 		return path.substring(index+1); // Get string after index+1 (the basename)		
 	}
@@ -273,6 +184,32 @@ public class HelperFile {
 	 */
 	public static String getCurrentVideoPath() {
 		return MainFrame.currentVideoPath;
+	}
+	
+	/**
+	 * Returns true if the file was successfully made
+	 * @param fileName
+	 * @return
+	 */
+	public static boolean isGenerated(String fileName){
+		String cmd = "find | grep -x \"./VideoFiles/" + fileName +".avi\" | wc -l";
+		try {		
+			startProcess(cmd);				
+			builder.redirectErrorStream(true);
+			InputStream stdout = process.getInputStream();
+			BufferedReader stdoutBuffered =	new BufferedReader(new InputStreamReader(stdout));
+					
+			String line = stdoutBuffered.readLine();	
+			System.out.println(line);
+			if (line.equals("0")) {
+				return false;
+			} else {
+				return true;
+			}		
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }
 
