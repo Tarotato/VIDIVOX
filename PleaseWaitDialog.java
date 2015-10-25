@@ -1,4 +1,4 @@
-package vidivox_beta;
+package commentary_manipulation;
 import java.awt.BorderLayout;
 import java.awt.Font;
 
@@ -8,7 +8,6 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-
 
 /**
  * @author Isabel Zhuang
