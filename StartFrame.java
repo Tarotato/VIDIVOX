@@ -12,6 +12,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.JButton;
 
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JLabel;
@@ -29,7 +30,6 @@ import javax.swing.JCheckBox;
  */
 @SuppressWarnings("serial")
 public class StartFrame extends JFrame {
-
 	private JPanel contentPane;
 	private JTextField txtVideoPath;
 	private String videoPath;
@@ -49,7 +49,6 @@ public class StartFrame extends JFrame {
 			public void run() {
 				try {
 					StartFrame frame = new StartFrame();
-					System.out.print("2nd one");
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -89,6 +88,7 @@ public class StartFrame extends JFrame {
 		txtVideoPath.setColumns(30);
 		
 		JButton btnBrowse = new JButton("Browse");
+		btnBrowse.setMnemonic(KeyEvent.VK_B);		
 		btnBrowse.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {				
 				// Allows user to choose their own video file to play
@@ -109,6 +109,7 @@ public class StartFrame extends JFrame {
 		
 		final JCheckBox chckbxDefaultVid = new JCheckBox("Use Default Video"); // Tick if user wants to use the big buck bunny video
 		panel_2.add(chckbxDefaultVid);
+		chckbxDefaultVid.setMnemonic(KeyEvent.VK_D);
 		
 		JPanel panel_3 = new JPanel();
 		panel.add(panel_3);
@@ -118,9 +119,9 @@ public class StartFrame extends JFrame {
 		panel_3.add(panel_4, BorderLayout.EAST);
 		
 		JButton btnNewButton = new JButton("Ok");
+		btnNewButton.setMnemonic(KeyEvent.VK_ENTER);	
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
 				if(chckbxDefaultVid.isSelected()) { // If the user chooses to use the bunny video
 					thisFrame.dispose();
 					new MainFrame("./VideoFiles/bunny.avi");
@@ -146,5 +147,4 @@ public class StartFrame extends JFrame {
 		});
 		panel_4.add(btnCancel);
 	}
-
 }
