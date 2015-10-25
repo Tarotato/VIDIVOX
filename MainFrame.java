@@ -1,5 +1,4 @@
 package vidivox_beta;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import javax.swing.JFrame;
@@ -21,35 +20,39 @@ import javax.swing.JLabel;
 
 import javax.swing.JSplitPane;
 
+import commentary_manipulation.TextEditingPanel;
+
+import background_tasks.BgForward;
+
 import uk.co.caprica.vlcj.player.MediaPlayer; //getTime(), skip(), mute(), pause(), play()
 import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent; 
+import video_manipulation.MenuBar;
+import video_manipulation.ProgressDisplayPanel;
+import video_manipulation.VolumeControlPanel;
 
 /**
  * @author Isabel Zhuang
  * Class contains implementation and graphical user interface code for the main frame.
  */
 @SuppressWarnings("serial")
-public class MainFrame extends JFrame {
-	
-	int festID = 0; // Process ID is very unlikely to be 0
-	static boolean playClicked = true;
+public class MainFrame extends JFrame {	
+	public static boolean playClicked = true;
 	int[] muteClicked = {1}; // Initialize as array so final value can be changed
-	static boolean stopForward = false;
-	
+	public static boolean stopForward = false;	
 	protected EmbeddedMediaPlayerComponent component = new EmbeddedMediaPlayerComponent();
 	protected MediaPlayer video;
 	protected static String currentVideoPath;
 	protected static String mp3Name = null;
-	protected static String[] videoName = {""};
-	
+	public static String[] videoName = {""};	
 	final protected int[] vidLength = {0}; // Initialize as array so final value can be changed
+	final static JButton btnPlay = new JButton();;
 	
 	/**
 	 * Create the frame.
 	 */
 	public MainFrame(String videoPath) {
-		setTitle("VIDIVOX alpha");
+		//setTitle("VIDIVOX - beta");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 50, 1050, 700);
 		final JFrame thisFrame = this;
@@ -80,20 +83,14 @@ public class MainFrame extends JFrame {
 		// Button implementation-------------------------------------------------->		
 		// Initialize all the buttons in video_control Panel
 		JButton btnSkipBack = new JButton();
-		btnSkipBack.setIcon(new ImageIcon(this.getClass().getResource("/buttons/skipb.png")));
-		
+		btnSkipBack.setIcon(new ImageIcon(this.getClass().getResource("/buttons/skipb.png")));		
 		JButton btnRewind = new JButton();
 		btnRewind.setIcon(new ImageIcon(this.getClass().getResource("/buttons/rewind.png")));
-		
-		final JButton btnPlay = new JButton();
-		btnPlay.setIcon(new ImageIcon(this.getClass().getResource("/buttons/pause.png")));
-		
+		btnPlay.setIcon(new ImageIcon(this.getClass().getResource("/buttons/pause.png")));		
 		JButton btnForward = new JButton();
-		btnForward.setIcon(new ImageIcon(this.getClass().getResource("/buttons/forward.png")));
-		
+		btnForward.setIcon(new ImageIcon(this.getClass().getResource("/buttons/forward.png")));		
 		JButton btnSkipForward = new JButton();
-		btnSkipForward.setIcon(new ImageIcon(this.getClass().getResource("/buttons/skipf.png")));
-		
+		btnSkipForward.setIcon(new ImageIcon(this.getClass().getResource("/buttons/skipf.png")));		
 		btnSkipBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				// Skips backward 5 seconds every time it is clicked
@@ -212,7 +209,6 @@ public class MainFrame extends JFrame {
 					lblTime.setText( ((video.getTime())/1000)/3600+"h"+((video.getTime())/1000)%3600/60+"m"+((video.getTime())/1000)%3600%60+ "s"); // Update the label
 					bar.setValue((int)(video.getTime())/1000); // Update the progress bar
 				}				
-				
 				if(video.getLength() == 0) {
 					// If video gets to the end, stop the fast forwarding
 					stopForward = true;
@@ -221,7 +217,8 @@ public class MainFrame extends JFrame {
 		});
 		timer.start();
 
-		ProgressDisplayPanel.setTotalTime(video, totalTime );
+		// Add panel at bottom of class so total time can be set
+		ProgressDisplayPanel.setTotalTime(video, totalTime);
 		progress.add(totalTime);
 		
 		// For fixing problem where video being muted to start with, when last execution exits while muted.
@@ -236,6 +233,12 @@ public class MainFrame extends JFrame {
 		    	}
             }
         });
+	    
+	    setTitle("VIDIVOX - "+ System.getProperty("user.dir")+currentVideoPath);
 	}
+	// Method to display correct image of play button
+	public static void setToPlay(){		
+		btnPlay.doClick();
+	}	
 }
 
