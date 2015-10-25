@@ -99,6 +99,7 @@ public class SaveAsDialog extends JDialog {
         buttonPane.add(okButton);
 
         JButton cancelButton = new JButton("Cancel");
+        cancelButton.setMnemonic(KeyEvent.VK_Z);
         cancelButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent arg0) {
         		cancelClicked = true;
