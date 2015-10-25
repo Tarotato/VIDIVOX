@@ -1,5 +1,4 @@
-package vidivox_beta;
-
+package video_manipulation;
 import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -18,10 +17,8 @@ import uk.co.caprica.vlcj.player.MediaPlayer;
  * 
  */
 @SuppressWarnings("serial")
-public class ProgressDisplayPanel extends JPanel {
-	
-	protected static int silenceTime = 0;
-	
+public class ProgressDisplayPanel extends JPanel {	
+	public static int silenceTime = 0;	
 	public ProgressDisplayPanel(JPanel videoPanel, JPanel progress, JLabel lblTime, final JProgressBar bar, JPanel videoControlPanel, final MediaPlayer video, final JTextField insertionTime){
 		
 		// Add this panel to the videoPanel with the progress bar related objects
@@ -61,8 +58,7 @@ public class ProgressDisplayPanel extends JPanel {
 	 * Method set the label for the total time of the video 
 	 */
 	public static void setTotalTime(MediaPlayer video, JLabel totalTime ){		
-		int videoLength = (int) Math.ceil(video.getLength()/1000);	
-		System.out.println(videoLength);				
+		int videoLength = (int) Math.ceil(video.getLength()/1000);			
 		// Sets total time in hrs, mins and secs
 		if(((video.getTime())/1000)/60 < 1){
 			totalTime.setText((Integer.toString(videoLength)+ " s")); // Update the Time textfield
