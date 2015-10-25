@@ -1,10 +1,10 @@
-package vidivox_beta;
-
+package video_manipulation;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -47,6 +47,7 @@ public class VolumeControlPanel extends JPanel {
 		panel_1.add(slider);
 
 		btnMute.setIcon(new ImageIcon(this.getClass().getResource("/buttons/unmute.png")));
+		btnMute.setMnemonic(KeyEvent.VK_M);
 		btnMute.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// Toggle the mute for the video depending on boolean variable muteClicked
