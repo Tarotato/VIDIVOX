@@ -1,4 +1,4 @@
-package vidivox_beta;
+package commentary_manipulation;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 
@@ -11,18 +11,20 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.JTextField;
 
+import vidivox_beta.HelperFile;
+import vidivox_beta.MainFrame;
+
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.awt.event.KeyEvent;
 
 /** 
  * @author Isabel Zhuang
  * Class contains implementation for generating a dialog for naming an mp3 or video file.
  */
 @SuppressWarnings("serial")
-public class saveAsDialog extends JDialog {
-
+public class SaveAsDialog extends JDialog {
     private final JPanel contentPanel = new JPanel();
     private JTextField textField;
     protected boolean cancelClicked;
@@ -30,8 +32,7 @@ public class saveAsDialog extends JDialog {
     /**
      * Create the dialog.
      */
-    public saveAsDialog(final String type, final String commentary) {
-    	
+    public SaveAsDialog(final String type, final String commentary) {    	
     	final JDialog thisDialog = this;
     	
     	// Formatting
@@ -62,7 +63,7 @@ public class saveAsDialog extends JDialog {
         panel.add(textField);
         textField.setColumns(10); 
         
-        // Sets text depending on what the user has to chosen to save
+        // Sets extension text depending on what the user has to chosen to save
         if(type.equals("mp3")) {
 			JLabel lblmp3 = new JLabel(".mp3");
 	        lblmp3.setBounds(350, 130, 110, 20);
@@ -78,6 +79,7 @@ public class saveAsDialog extends JDialog {
         getContentPane().add(buttonPane, BorderLayout.SOUTH);
 
         JButton okButton = new JButton("OK");
+        okButton.setMnemonic(KeyEvent.VK_ENTER);
         okButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent arg0) {
         		// Compares if dialog is used for naming an mp3 file or video
