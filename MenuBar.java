@@ -1,40 +1,39 @@
-package vidivox_beta;
-
+package video_manipulation;
+import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
+import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import uk.co.caprica.vlcj.player.MediaPlayer;
+import vidivox_beta.HelperFile;
+import vidivox_beta.MainFrame;
 
 /**
  * @author Isabel Zhuang
  * Class creates the menu bar with custom functions  
  */
 @SuppressWarnings("serial")
-public class MenuBar extends JMenuBar{
-	
+public class MenuBar extends JMenuBar{	
 	public MenuBar(final MediaPlayer video, final MainFrame mainFrame, final JSplitPane splitPane, final int[] vidLength, final JProgressBar bar, final JPanel videoPanel){
 		
 		// Lets user open a new video file
 		JMenu mnFile = new JMenu("File");
+		mnFile.setMnemonic(KeyEvent.VK_F);
 		this.add(mnFile);
-		
+
 		JMenuItem mntmOpenNewVideo = new JMenuItem("Open New Video...");
 		mntmOpenNewVideo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -49,8 +48,12 @@ public class MenuBar extends JMenuBar{
 					newPath = videoChooser.getSelectedFile().getPath();
 					// Check if file chosen is a video, if yes, change video, if not, show error dialog and do nothing
 					if(HelperFile.isVideo(newPath)) {
+						if(!MainFrame.playClicked){
+							MainFrame.setToPlay();
+						}	
 						video.playMedia(newPath);
 						HelperFile.setCurrentVideoPath(newPath);
+						mainFrame.setTitle("VIDIVOX - "+ newPath);
 						while(vidLength[0] == 0) {
 							vidLength[0] = (int)((video.getLength())/1000);
 						}	
@@ -76,41 +79,25 @@ public class MenuBar extends JMenuBar{
 		});
 		mnWindow.add(restoreWindow);		
 
-		// Let user have access to the VIDIVOX guide
+		// Let user open the VIDIVOX user manual
 		JMenu help = new JMenu("Help");
 		this.add(help);
 		
-		JMenuItem mnInstructions = new JMenuItem("VIDIVOX Guide");
+		JMenuItem mnInstructions = new JMenuItem("VIDIVOX User Manual");
 		mnInstructions.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				JFrame guide = new JFrame();
-				guide.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-				guide.setBounds(300, 150, 400, 300);
-				JScrollPane scrollPane = new JScrollPane();
-				guide.add(scrollPane);
-				
-				JTextArea txtrGuide = new JTextArea(); // TextArea for user to enter their commentary
-				txtrGuide.setLineWrap(true);
-				txtrGuide.setEditable(false);
-				
-				// Sets text area form a text file
-				File file = new File(System.getProperty("user.dir")+"/VIDIVOX_Guide");
-				FileReader reader;
-				try {
-					reader = new FileReader( file );
-					BufferedReader br = new BufferedReader(reader);
-				txtrGuide.read( br, null );
-				br.close();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}			
-				
-				scrollPane.setViewportView(txtrGuide);				
-				guide.setVisible(true);				
+				if (Desktop.isDesktopSupported()) {
+		                File userManual = new File( System.getProperty("user.dir")+"/VIDIVOX_USER_MANUAL");
+		                try {
+							Desktop.getDesktop().open(userManual);
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+				}
 			}
 		});
 		help.add(mnInstructions);
+		JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 	}
-
 }
