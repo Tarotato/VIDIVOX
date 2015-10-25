@@ -1,5 +1,4 @@
-package vidivox_beta;
-
+package commentary_manipulation;
 import java.awt.Color;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -12,9 +11,8 @@ import javax.swing.JTextArea;
  * This occurs only once when VIDIVOX is first run
  */
 @SuppressWarnings("serial")
-public class CommentaryTextArea extends JTextArea implements FocusListener{
-	
-	boolean i = true;
+public class CommentaryTextArea extends JTextArea implements FocusListener{	
+	boolean i = true;	
 	
 	public CommentaryTextArea(){
 		this.addFocusListener(this);
@@ -23,9 +21,6 @@ public class CommentaryTextArea extends JTextArea implements FocusListener{
 		this.setForeground(Color.GRAY);		
 	}
 
-	/* (non-Javadoc)
-	 * @see java.awt.event.FocusListener#focusGained(java.awt.event.FocusEvent)
-	 */
 	@Override
 	public void focusGained(FocusEvent e) {
 		if(i){
@@ -34,7 +29,6 @@ public class CommentaryTextArea extends JTextArea implements FocusListener{
 			i = false;
 		}		
 	}
-
 	@Override
 	public void focusLost(FocusEvent e) {
 		// Do nothing		
