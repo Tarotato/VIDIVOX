@@ -137,6 +137,7 @@ public class StartFrame extends JFrame {
 		panel_4.add(btnNewButton);
 		
 		JButton btnCancel = new JButton("Cancel");
+		btnCancel.setMnemonic(KeyEvent.VK_Z);
 		btnCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int n = JOptionPane.showConfirmDialog(thisFrame, "Are you qure you want to quit?", "Exit", JOptionPane.OK_CANCEL_OPTION);
