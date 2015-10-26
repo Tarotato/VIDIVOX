@@ -12,7 +12,7 @@ Follow these instructions to to run VIDIVOX prototype:
 	e.g>> cd Downloads (If it is in your downloads directory)
 4. Once in the correct directory, run the jar file by typing the following into the terminal:
 
-	>> java -jar VIDIVOX_izhu678.jar
+	>> java -jar VIDIVOXFinal.jar
 	
 5. A prompt should appear for you to choose a video.
 Note To User:
